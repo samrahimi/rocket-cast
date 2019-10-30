@@ -515,6 +515,16 @@ Template.room.helpers({
 
 		return moment.duration(roomMaxAge(room) * 1000 * 60 * 60 * 24).humanize();
 	},
+	socvidPlayerUrl() {
+        const roomData = Session.get(`roomData${ this._id }`);
+        if (!roomData) { return ''; }
+
+        var roomName= roomTypes.getRoomName(roomData.t, roomData);
+    
+    
+		return `<iframe id="the-player" src="http://samrahimi.com/client/video.html?channel=${roomName}&dev=true" allow="autoplay" style="border:0;overflow:hidden;width:100%"></iframe>`;
+    },
+
 	messageContext,
 });
 
@@ -1188,6 +1198,15 @@ Template.room.onRendered(function() {
 	lastScrollTop = $('.messages-box .wrapper').scrollTop();
 
 	const rtl = $('html').hasClass('rtl');
+
+		/* iBroadcast responsive player */
+		$("#the-player").height(parseInt(
+			$("#the-player").width() * 9 / 16))
+
+		$("window").on("resize", (e) => { 
+			$("#the-player").height(parseInt(
+				$("#the-player").width() * 9 / 16))
+		})
 
 	const getElementFromPoint = function(topOffset = 0) {
 		const messageBoxOffset = messageBox.offset();
