@@ -522,7 +522,7 @@ Template.room.helpers({
         var roomName= roomTypes.getRoomName(roomData.t, roomData);
     
     
-		return `<iframe id="the-player" src="http://samrahimi.com/client/video.html?channel=${roomName}&dev=true" allow="autoplay" style="border:0;overflow:hidden;width:100%"></iframe>`;
+		return `<iframe id="the-player" src="https://samrahimi.com/client/video.html?channel=${roomName}&dev=true" allow="autoplay" style="border:0;overflow:hidden;width:100%"></iframe>`;
     },
 
 	messageContext,
