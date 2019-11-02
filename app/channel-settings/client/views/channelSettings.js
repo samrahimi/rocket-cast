@@ -16,7 +16,7 @@ import { ChannelSettings } from '../lib/ChannelSettings';
 
 const common = {
 	socvidAdminUrl() {
-		return `<iframe id="wtf" class="responsive-iframe" src="https://samrahimi.com/client/admin.html?channel=${roomName}&dev=false&layout=embedded" style="border:0;overflow:hidden;width:100%;height:200px"></iframe>`;
+		return `<iframe id="wtf" class="responsive-iframe" src="https://samrahimi.com/client/admin.html?channel=${Template.instance().room.name}&dev=false&layout=embedded" style="border:0;overflow:hidden;width:100%;height:200px"></iframe>`;
 
 
 	},
