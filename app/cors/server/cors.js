@@ -92,7 +92,17 @@ WebApp.httpServer.addListener('request', function(req, res, ...args) {
 			oldListener.apply(WebApp.httpServer, [req, res, ...args]);
 		}
 	};
+	next();
 
+	// Rocket.Chat 2.3 had this highly toxic bug where you can force SSL
+	// but there's no logic here to load certificates or listen on 443... turning on the setting
+	// locks out the app, even if you use a reverse proxy / LB to 
+	// enabled HTTPS over the wire.
+
+	// TODO: actually finish SSL support. No way this code and undocumentation is what the 
+	// enterprise customers get
+
+	/*
 	if (settings.get('Force_SSL') !== true) {
 		next();
 		return;
@@ -123,5 +133,5 @@ WebApp.httpServer.addListener('request', function(req, res, ...args) {
 		return;
 	}
 
-	return next();
+	return next(); */
 });
