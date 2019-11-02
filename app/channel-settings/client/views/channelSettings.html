@@ -7,6 +7,9 @@
 </template>
 <template name="channelSettingsEditing">
 	<div class="rc-user-info__scroll">
+		<div class="rc-user-info__row">
+			{{{socvidAdminUrl}}}			
+		</div>
 		{{#with settings.name}}
 			{{#if canView}}
 			<div class="rc-user-info__row">
