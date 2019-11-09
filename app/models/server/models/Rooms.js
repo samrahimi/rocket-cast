@@ -797,9 +797,7 @@ export class Rooms extends Base {
 		const query = { _id };
 
 		const update = {
-			$set: {
-				customFields,
-			},
+			$set: customFields,
 		};
 
 		return this.update(query, update);
