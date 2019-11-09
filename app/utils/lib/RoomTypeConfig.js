@@ -22,6 +22,8 @@ export const RoomSettingsEnum = {
 	BROADCAST: 'broadcast',
 	SYSTEM_MESSAGES: 'systemMessages',
 	E2E: 'encrypted',
+	IBROADCAST_ENABLED: 'ibroadcastEnabled',
+	IBROADCAST_RADIO_VIEW: 'ibroadcastRadioView'
 };
 
 export const UiTextContext = {

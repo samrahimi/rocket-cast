@@ -7,9 +7,45 @@
 </template>
 <template name="channelSettingsEditing">
 	<div class="rc-user-info__scroll">
-		<div class="rc-user-info__row">
-			{{{socvidAdminUrl}}}			
+		{{#if settings.ibroadcastEnabled}}
+			<div class="rc-user-info__row">
+				{{{socvidAdminUrl}}}			
+			</div>
+		{{/if}}
+		{{#with settings.ibroadcastEnabled}}
+		<div class="rc-user-info__row rc-user-info__row--separator">
+			<div class="rc-switch rc-switch--blue">
+				<label class="rc-switch__label">
+					<span class="rc-switch__text">
+						Show iBroadcast Player {{equal default value '*'}}
+					</span>
+					<input type="checkbox" class="rc-switch__input js-input-check" name="ibroadcastEnabled" checked="{{checked}}" disabled="{{./disabled}}">
+					<span class="rc-switch__button">
+						<span class="rc-switch__button-inside"></span>
+					</span>
+				</label>
+			</div>
 		</div>
+		{{/with}}
+
+		{{#with settings.ibroadcastRadioView}}
+		<div class="rc-user-info__row rc-user-info__row--separator">
+			<div class="rc-switch rc-switch--blue">
+				<label class="rc-switch__label">
+					<span class="rc-switch__text">
+						Radio Mode {{equal default value '*'}}
+					</span>
+					<input type="checkbox" class="rc-switch__input js-input-check" name="ibroadcastEnabled" checked="{{checked}}" disabled="{{./disabled}}">
+					<span class="rc-switch__button">
+						<span class="rc-switch__button-inside"></span>
+					</span>
+				</label>
+			</div>
+		</div>
+		{{/with}}
+
+
+
 		{{#with settings.name}}
 			{{#if canView}}
 			<div class="rc-user-info__row">

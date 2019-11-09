@@ -16,7 +16,7 @@ import { saveRoomSystemMessages } from '../functions/saveRoomSystemMessages';
 import { saveRoomTokenpass } from '../functions/saveRoomTokens';
 import { saveStreamingOptions } from '../functions/saveStreamingOptions';
 
-const fields = ['roomName', 'roomTopic', 'roomAnnouncement', 'roomCustomFields', 'roomDescription', 'roomType', 'readOnly', 'reactWhenReadOnly', 'systemMessages', 'default', 'joinCode', 'tokenpass', 'streamingOptions', 'retentionEnabled', 'retentionMaxAge', 'retentionExcludePinned', 'retentionFilesOnly', 'retentionOverrideGlobal', 'encrypted'];
+const fields = ['ibroadcastEnabled', 'ibroadcastRadioView', 'roomName', 'roomTopic', 'roomAnnouncement', 'roomCustomFields', 'roomDescription', 'roomType', 'readOnly', 'reactWhenReadOnly', 'systemMessages', 'default', 'joinCode', 'tokenpass', 'streamingOptions', 'retentionEnabled', 'retentionMaxAge', 'retentionExcludePinned', 'retentionFilesOnly', 'retentionOverrideGlobal', 'encrypted'];
 Meteor.methods({
 	saveRoomSettings(rid, settings, value) {
 		const userId = Meteor.userId();
@@ -130,6 +130,7 @@ Meteor.methods({
 
 		Object.keys(settings).forEach((setting) => {
 			const value = settings[setting];
+			console.log(`name: ${setting}, value: ${settings[setting]}`)
 			switch (setting) {
 				case 'roomName':
 					saveRoomName(rid, value, user);
@@ -210,6 +211,14 @@ Meteor.methods({
 					break;
 				case 'encrypted':
 					Rooms.saveEncryptedById(rid, value);
+					break;
+
+				//jesus fucking christ, how many layers did those college boys put in here?!
+				//FYI: you don't need Functions, or custom methods in Rooms for each field, or 
+				default:
+					console.log(`update settings for room ${rid}, update is ${JSON.stringify({[setting]: value})}`)
+					Rooms.update({_id: rid}, {$set: {[setting]: value}})
+
 					break;
 			}
 		});

@@ -95,6 +95,10 @@ export class PublicRoomType extends RoomTypeConfig {
 
 	allowRoomSettingChange(room, setting) {
 		switch (setting) {
+			case RoomSettingsEnum.IBROADCAST_ENABLED:
+				return room.t == 'c';
+			case RoomSettingsEnum.IBROADCAST_RADIO_VIEW:
+				return room.ibroadcastEnabled; 
 			case RoomSettingsEnum.BROADCAST:
 				return room.broadcast;
 			case RoomSettingsEnum.READ_ONLY:

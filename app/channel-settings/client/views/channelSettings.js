@@ -392,6 +392,46 @@ Template.channelSettingsEditing.onCreated(function() {
 				return call('saveRoomSettings', room._id, RoomSettingsEnum.READ_ONLY, value).then(() => toastr.success(t('Read_only_changed_successfully')));
 			},
 		},
+		ibroadcastEnabled: {
+			type: 'boolean',
+			label: 'Ibroadcast_enabled',
+
+			isToggle: true,
+			processing: new ReactiveVar(false),
+			getValue() {
+				return room.ibroadcastEnabled !== false;
+			},
+
+			canView() {
+				return room.t == 'c'
+			},
+			canEdit() {
+				return hasAllPermission('edit-room', room._id);
+			},
+			save(value) {
+				console.log(JSON.stringify([room._id, RoomSettingsEnum.IBROADCAST_ENABLED, value]))
+				return call('saveRoomSettings', room._id, RoomSettingsEnum.IBROADCAST_ENABLED, value).then(() => toastr.success(`iBroadcast ${value === true ? 'Enabled' : 'Disabled'}`))
+			},
+		},
+		ibroadcastRadioView: {
+			type: 'boolean',
+			label: 'Ibroadcast_radio_view',
+			isToggle: true,
+			processing: new ReactiveVar(false),
+			getValue() {
+				return room.ibroadcastRadioView !== false;
+			},
+			canView() {
+				return room.t == 'c' 
+			},
+			canEdit() {
+				return room.ibroadcastEnabled !== false && hasAllPermission('edit-room', room._id);
+			},
+			save(value) {
+				return call('saveRoomSettings', room._id, RoomSettingsEnum.IBROADCAST_RADIO_VIEW, value).then(() => toastr.success('iBroadcast player '));
+			},
+
+		},
 		reactWhenReadOnly: {
 			type: 'boolean',
 			label: 'React_when_read_only',
@@ -811,6 +851,13 @@ Template.channelSettingsInfo.helpers({
 	topic() {
 		return Template.instance().room.topic;
 	},
+	ibroadcastEnabled() {
+		return Template.instance().room.ibroadcastEnabled;
+	},
+	ibroadcastRadioView() {
+		return Template.instance().room.ibroadcastRadioView;
+	},
+
 
 	channelIcon() {
 		return roomTypes.getIcon(Template.instance().room);
