@@ -263,6 +263,27 @@ Template.channelSettingsEditing.onCreated(function() {
 				});
 			},
 		},
+		avatarUrl: {
+			type: 'text',
+			label: 'Profile Pic URL',
+			getValue() {
+				return room.avatarUrl;
+			},
+
+			canView() {
+				return room.t ==='c'
+			},
+			canEdit() {
+				return hasAllPermission('edit-room', room._id);
+			},
+			save(value) {
+				return call('saveRoomSettings', room._id, 'avatarUrl', value).then(function() {
+					toastr.success('Saved Profile Pic');
+					return callbacks.run('roomTopicChanged', room);
+				});
+			},
+		},
+
 		topic: {
 			type: 'markdown',
 			label: 'Topic',
