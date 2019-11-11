@@ -436,6 +436,10 @@ Template.room.helpers({
 		return state.get('subscribed') && settings.get('Favorite_Rooms');
 	},
 
+	widescreen() {
+		return window.innerWidth >= 800;
+	},
+
 	messageViewMode() {
 		const viewMode = getUserPreference(Meteor.userId(), 'messageViewMode');
 		const modes = ['', 'cozy', 'compact'];

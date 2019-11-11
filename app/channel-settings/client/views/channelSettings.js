@@ -20,6 +20,22 @@ const common = {
 
 
 	},
+/*
+	avatarUrl() {
+		return Template.instance().room.avatarUrl;
+		const room = ChatRoom.findOne(this.rid, {
+			fields: {
+				avatarUrl: 1,
+				t: 1,
+			},
+		});
+		if (room && room.avatarUrl) 
+			return room.avatarUrl
+		else {
+			if (room && room.name)
+				return `/avatar/@${room.name}`
+		}
+	}, */
 	canLeaveRoom() {
 		const { cl: canLeave, t: roomType } = Template.instance().room;
 		return roomType !== 'd' && canLeave !== false;
@@ -874,6 +890,9 @@ Template.channelSettingsInfo.helpers({
 	},
 	ibroadcastEnabled() {
 		return Template.instance().room.ibroadcastEnabled;
+	},
+	avatarUrl() {
+		return Template.instance().room.avatarUrl;
 	},
 	ibroadcastRadioView() {
 		return Template.instance().room.ibroadcastRadioView;
