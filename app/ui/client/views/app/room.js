@@ -524,7 +524,7 @@ Template.room.helpers({
         if (!roomData) { return ''; }
 
         var roomName= roomTypes.getRoomName(roomData.t, roomData);
-    
+		console.log(JSON.stringify(roomData, null, 2))
     
 		return `<iframe id="the-player" src="https://samrahimi.com/client/video.html?channel=${roomName}&dev=false" allow="autoplay" style="border:0;overflow:hidden;width:100%"></iframe>`;
     },

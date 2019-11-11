@@ -1,5 +1,10 @@
 .contextual-bar {
-	z-index: 1;
+	position: fixed;
+	z-index: 999;
+	top: 0;
+	right: 0;
+	
+	animation: dropup-show 0.3s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 
 	display: flex;
 
@@ -137,6 +142,8 @@
 	}
 }
 
+/* For single column chat layout
+
 @media (width <= 1100px) {
 	.contextual-bar {
 		position: absolute;
@@ -149,7 +156,7 @@
 		right: unset;
 		left: 0;
 	}
-}
+} 
 
 @media (width <= 500px) {
 	.contextual-bar {
@@ -161,7 +168,7 @@
 
 		animation: dropup-show 0.3s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 	}
-}
+}*/
 
 .flex-tab__result {
 	.attachments {
