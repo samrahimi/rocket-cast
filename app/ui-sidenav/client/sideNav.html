@@ -1,8 +1,14 @@
 <template name="sideNav">
 	<aside class="sidebar sidebar--{{sidebarViewMode}} {{#if sidebarHideAvatar}}sidebar--hide-avatar{{/if}}" role="navigation">
-		{{> sidebarHeader }}
+		{{#if isMobile}}
+			<style>
+				
+			</style>
+			{{> sidebarHeader }}
+		{{/if}}
 		{{#if loggedInUser}}
-			<div class="unread-rooms background-primary-action-color color-primary-action-contrast top-unread-rooms hidden">
+			<div class="unread-rooms 
+			background-primary-action-color color-primary-action-contrast top-unread-rooms hidden">
 				{{_ "More_unreads"}} <i class="icon-up-big"></i>
 			</div>
 			<div class="rooms-list" aria-label="{{_ "Channels"}}" role="region">
@@ -24,7 +30,9 @@
 			</div>
 		{{/if}}
 
-		<footer class="sidebar__footer">{{{footer}}}</footer>
+		<footer class="sidebar__footer">
+			{{{footer}}}
+		</footer>
 	</aside>
 	<div class="sidebar-wrap"></div>
 </template>

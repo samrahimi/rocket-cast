@@ -147,9 +147,26 @@ Template.main.onCreated(function() {
 	tooltip.init();
 });
 
+
+
 Template.main.helpers({
+	isWidescreenRoom() {
+		return window.innerWidth >= 800 && FlowRouter.getRouteName().indexOf('/channel/') >= 0;
+	},
+	widescreen() {
+		return window.innerWidth >= 800
+	},
 	removeSidenav() {
-		return Layout.isEmbedded() && !/^\/admin/.test(FlowRouter.current().route.path);
+		//Hide side bar if:
+		//Embedded and not on an admin page OR
+		//On a channel page on desktop.
+		//Mobile users always get a sidebar because they need one
+		return ((Layout.isEmbedded() && !/^\/admin/.test(FlowRouter.current().route.path)) || 
+		(window.innerWidth >= 800 && FlowRouter.getRouteName().indexOf('channel') >= 0))
+
+
+		console.log(`Template.main: ${FlowRouter.getRouteName()}`)
+	
 	},
 	siteName() {
 		return settings.get('Site_Name');
@@ -229,6 +246,9 @@ Template.main.helpers({
 
 Template.main.events({
 	'click div.burger'() {
+		return menu.toggle();
+	},
+	'click .logo-top'() {
 		return menu.toggle();
 	},
 });

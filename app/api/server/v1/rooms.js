@@ -28,7 +28,7 @@ function findRoomByIdOrName({ params, checkedArchived = true }) {
 	return room;
 }
 
-API.v1.addRoute('rooms.get', { authRequired: true }, {
+API.v1.addRoute('rooms.get', { authRequired: false }, {
 	get() {
 		const { updatedSince } = this.queryParams;
 
@@ -202,7 +202,7 @@ API.v1.addRoute('rooms.cleanHistory', { authRequired: true }, {
 	},
 });
 
-API.v1.addRoute('rooms.info', { authRequired: true }, {
+API.v1.addRoute('rooms.info', { authRequired: false }, {
 	get() {
 		const room = findRoomByIdOrName({ params: this.requestParams() });
 		const { fields } = this.parseJsonQuery();

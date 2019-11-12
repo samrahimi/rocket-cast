@@ -96,3 +96,4 @@ webapp@1.7.3
 webapp-hashing@1.0.9
 rocketchat:oauth2-server
 rocketchat:i18n
+insecure

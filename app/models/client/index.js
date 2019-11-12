@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import _ from 'underscore';
 
 import { Base } from './models/_Base';
+import DBRooms from './models/Rooms';
 import Avatars from './models/Avatars';
 import Uploads from './models/Uploads';
 import UserDataFiles from './models/UserDataFiles';
@@ -31,6 +32,8 @@ const Rooms = _.extend({}, ChatRoom);
 
 export {
 	Base,
+	DBRooms,
+	Rooms,
 	Avatars,
 	Uploads,
 	UserDataFiles,
@@ -50,7 +53,6 @@ export {
 	ChatPermissions,
 	ChatMessage,
 	ChatSubscription,
-	Rooms,
 	CustomSounds,
 	CustomUserStatus,
 	EmojiCustom,

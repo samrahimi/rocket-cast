@@ -7,7 +7,7 @@ import moment from 'moment';
 import s from 'underscore.string';
 
 import { modal, popover, call, erase, hide, leave } from '../../../ui-utils';
-import { ChatRoom } from '../../../models';
+import { ChatRoom, DBRooms } from '../../../models';
 import { settings } from '../../../settings';
 import { callbacks } from '../../../callbacks';
 import { hasPermission, hasAllPermission, hasRole, hasAtLeastOnePermission } from '../../../authorization';
@@ -231,6 +231,10 @@ Template.channelSettingsEditing.events({
 Template.channelSettingsEditing.onCreated(function() {
 	const room = ChatRoom.findOne(this.data && this.data.rid);
 	this.room = room;
+	this.dbRoom = DBRooms.findOne(room._id)
+	console.log("Hamster")
+	console.log(JSON.stringify(this.dbRoom, null, 2))
+	
 	this.settings = {
 		name: {
 			type: 'text',

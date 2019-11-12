@@ -81,14 +81,23 @@ Template.sideNav.events({
 });
 
 const redirectToDefaultChannelIfNeeded = () => {
+	/*
 	const currentRouteState = FlowRouter.current();
 	const needToBeRedirect = ['/', '/home'];
 	const firstChannelAfterLogin = settings.get('First_Channel_After_Login');
 	const room = roomTypes.findRoom('c', firstChannelAfterLogin, Meteor.userId());
 	if (room && room._id && needToBeRedirect.includes(currentRouteState.path)) {
 		FlowRouter.go(`/channel/${ firstChannelAfterLogin }`);
-	}
+	} */
 };
+
+const listenForRouteChange = ((router, onRouteChange) => {
+	onRouteChange(router.getRouteName())
+})
+
+const useMobileStyling = () => {
+	return window.innerWidth < 800
+}
 
 Template.sideNav.onRendered(function() {
 	SideNav.init();
@@ -99,10 +108,30 @@ Template.sideNav.onRendered(function() {
 	return Meteor.defer(() => menu.updateUnreadBars());
 });
 
+Template.sideNav.helpers({
+	isMobile() {
+		return useMobileStyling();
+	}
+})
+
 Template.sideNav.onCreated(function() {
 	this.groupedByType = new ReactiveVar(false);
+	this.showHeader = new ReactiveVar(false);
+	this.pageHasSidebar = new ReactiveVar(true);
 
+	
 	this.autorun(() => {
+		setInterval(() => {
+			if (!useMobileStyling()) {
+				console.log(`Template.sideNav: ${FlowRouter.getRouteName()}`)
+				if (FlowRouter.getRouteName() == 'channel') {
+					$(".sideNav").hide()
+				} else {
+					$(".sideNav").show()
+				}	
+			}
+		}, 50)
+
 		const user = Users.findOne(Meteor.userId(), {
 			fields: {
 				'settings.preferences.sidebarGroupByType': 1,

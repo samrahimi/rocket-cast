@@ -63,14 +63,14 @@
 	* General
 	*/
 	--text-size: 0.875rem;
-	--header-min-height: 60px;
+	--header-min-height: 40px;
 	--toolbar-height: 55px;
 	--footer-min-height: 70px;
 	--rooms-box-width: 280px;
 	--flex-tab-width: 400px;
 	--flex-tab-webrtc-width: 400px;
 	--flex-tab-webrtc-2-width: 850px;
-	--user-image-square: 20px;
+	--user-image-square: 40px;
 	--border: 2px;
 	--border-radius: 2px;
 	--status-online: var(--rc-color-success);
@@ -315,8 +315,8 @@
 	/*
 	* Header
 	*/
-	--header-height: 77px;
-	--header-padding: 16px;
+	--header-height: 60px;
+	--header-padding: 10px;
 	--header-toggle-favorite-color: var(--color-gray-medium);
 	--header-toggle-favorite-star-color: var(--rc-color-alert-light);
 	--header-toggle-encryption-off-color: var(--color-gray-medium);
