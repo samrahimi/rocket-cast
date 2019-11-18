@@ -1,37 +1,17 @@
 <template name="room">
 
 	<div class="rf440">
-		{{#if widescreen}}
-			<style>
-				.ibroadcast-is-back-u-hamster {
-					width:100%;
-				}
-				.rf440 {
-					width: 100%;
-					height: calc(100% - 60px);
-				}
-			</style>
 
-			{{# headerRoom}}
-				{{#with flexData}}
-					<div class="rc-header__block rc-header__block-action">
-						{{> RoomsActionTab}}
-					</div>
-				{{/with}}
-			{{/headerRoom}}
-		{{/if}}
-
-		{{#unless widescreen}}
 		<style>
 				.ibroadcast-is-back-u-hamster {
 					width:100%;
+					background-color:black
 				}
 				.rf440 {
 					width: 100%;
 					height: 100%;
 				}
 		</style>
-		{{/unless}}
 		
 		<div class="main-content-flex">
 				{{#if widescreen}}
@@ -44,7 +24,6 @@
 
 				<section class="messages-container" id="{{windowId}}" aria-label="{{_ "Channel"}}">
 					{{# unless embeddedVersion}}
-						{{#unless widescreen}}
 							{{# headerRoom}}
 								{{#with flexData}}
 									<div class="rc-header__block rc-header__block-action">
@@ -52,7 +31,6 @@
 									</div>
 								{{/with}}
 							{{/headerRoom}}
-						{{/unless}}
 					{{/unless}}
 					<div class="messages-container-wrapper">
 						<div class="messages-container-main dropzone">

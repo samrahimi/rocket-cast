@@ -121,6 +121,7 @@ Template.sideNav.onCreated(function() {
 
 	
 	this.autorun(() => {
+		/*
 		setInterval(() => {
 			if (!useMobileStyling()) {
 				console.log(`Template.sideNav: ${FlowRouter.getRouteName()}`)
@@ -130,7 +131,7 @@ Template.sideNav.onCreated(function() {
 					$(".sideNav").show()
 				}	
 			}
-		}, 50)
+		}, 50) */
 
 		const user = Users.findOne(Meteor.userId(), {
 			fields: {
