@@ -334,7 +334,7 @@
 	/*
 	* Flex nav
 	*/
-	--flex-nav-background: var(--color-gray-lightest);
+	--flex-nav-background: var(--color-dark);
 
 	/*
 	* Popover

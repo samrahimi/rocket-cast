@@ -6,7 +6,15 @@ import { actionLinks } from '../../action-links';
 import { Rooms } from '../../models';
 
 actionLinks.register('joinJitsiCall', function(message, params, instance) {
+	  
+	instance.tabBar.open('video');
+});
+
+	/* No! There are no "calls". What retard thought of that?
+
 	if (Session.get('openedRoom')) {
+		instance.tabBar.open('video');
+
 		const rid = Session.get('openedRoom');
 
 		const room = Rooms.findOne({ _id: rid });
@@ -15,8 +23,7 @@ actionLinks.register('joinJitsiCall', function(message, params, instance) {
 
 		if (jitsiTimeout > currentTime) {
 			instance.tabBar.open('video');
-		} else {
-			toastr.info(TAPi18n.__('Call Already Ended', ''));
-		}
-	}
-});
+			} else {
+				toastr.info(TAPi18n.__('Call Already Ended', ''));
+			} */
+		
