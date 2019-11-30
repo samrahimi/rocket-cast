@@ -224,6 +224,145 @@ function roomMaxAge(room) {
 	}
 }
 
+//Random DOM-related stuff to do when
+//loading the socvid player and the socvid-specific Jisti embed
+//basically stuff that is being done outside of Meteor
+const initSocvidUI = (roomInstance) => {
+	const { _id: rid } = roomInstance.data;
+
+	/* iBroadcast responsive player */
+	$("#the-player").height(parseInt(
+		$("#the-player").width() * 9 / 16))
+
+	$("window").on("resize", (e) => { 
+		$("#the-player").height(parseInt(
+			$("#the-player").width() * 9 / 16))
+	})
+
+
+	/* Jitsi desktop embed */
+	if (screen.width >= 800){
+		const domain = 'meet.jit.si';
+		const options = {
+			roomName: roomInstance.data.name || rid,
+			width: '100%',
+			height:'100%',
+			parentNode: document.querySelector('#desktop-jitsi-container'),
+			interfaceConfigOverride: jitsiInterfaceConfig
+		};
+		//window["JITSI_CURRENT_ROOM"] = new JitsiMeetExternalAPI(domain, options);
+	}
+}
+
+//Create a generic SocVid user object from the currently logged in user
+//The SocVid servers have no idea about Meteor or the chat.socvid.net database
+//and expect user data to have everything it needs for rendering 
+//current viewers, who's online, and channel surfer data
+const getGenericUserObject= () => {
+	if (!Meteor.userId()) {
+		return {
+			anonymous: true,
+			user_id: "ANONYMOUS",
+			profile_url: "#",
+			system_id: "socvid.chat",
+			username: "anonymous",
+			display_name: "Anonymous User",
+			avatar_url: "https://chat.socvid.net/images/socvid/unknown_user.png"
+		}
+	} else {
+		let u = Meteor.user()
+		return {
+			anonymous: false,
+			user_id: u._id,
+			profile_url: "https://chat.socvid.net/direct/"+ u.username,
+			system_id: "socvid.chat",
+			username: u.username,
+			display_name: u.name,
+			avatar_url: "https://chat.socvid.net/avatar/"+u.username
+		}
+	}
+}
+
+//Create a generic socvid room object
+//so that external systems can render channel guides etc
+//comprised of rooms from this system and many others, 
+//without knowing anything about their workings
+const getGenericRoomObject = (rid) => {
+	const roomData = Session.get(`roomData${ rid }`);
+	var roomName= roomData ? roomTypes.getRoomName(roomData.t, roomData) : '';
+	if (roomName == '') {
+		return {
+			anonymous: true,
+			channel_id: rid,
+		}
+	} else {
+		return {
+			anonymous: false,
+			channel_id: rid,
+			channel_type: roomData.t,
+			channel_name: roomName,
+			channel_url: "https://chat.socvid.net/channel/"+roomName,
+			avatar_url: "https://chat.socvid.net/images/socvid/unknown_user.png",
+		}
+	}
+}
+const stopSocvidUserPresence = () => {
+	clearInterval(window["SV_PRESENCE"])
+}
+const startSocvidUserPresence = (rid) => {
+
+	//We create a global instance of the Dispatcher 
+	//which creates a socket connection to the SocVid Admin server
+	//that we use to send user presence updates.
+	//
+	//At the time this code was written, there was no need to handle 
+	//any incoming dispatches, but in case that need arises in the future
+	//we instantiate the Dispatcher with a handler function that passes the message along 
+	//to any handlers that may be listening for SVDispatchReceived on document.body
+	//
+	//Therefore, handlers may be added in the future without touching this code or knowing
+	//anything about Dispatchers and websockets, e.g. $("body").on("SVDispatchReceived", (e) => {
+	//	console.log(e.detail)
+	//})
+	window["SV_DISPATCH"] = new Dispatcher(
+	'socvid.chat', 
+	rid, 
+	(message) => {
+		console.log("*** SocVid WS Dispatch received in Chat Client ***")
+		console.log(JSON.stringify(message))
+		console.log("*** Raising body.SVDispatchReceived event ***")
+		$("body").dispatchEvent(new CustomEvent("SVDispatchReceived", {
+			bubbles: true,
+			detail: message
+		}));
+	})
+
+	//Every 30 seconds, tell the socvid server that the user is 
+	//still on the page and therefore is watching the channel... 
+	//
+	//There is no need to tell the server when the user leaves the room;
+	//just call clearInterval to make sure it stops sending "i'm still here" 
+	window["SV_PRESENCE"] = setInterval(() => {
+        
+		window["SV_DISPATCH"].Dispatch(
+				"user_presence", 
+				{
+					user: getGenericUserObject(), 
+					channel: getGenericRoomObject(rid), 
+					lastActivity: Date.now
+				}, 
+				null, 'socvid.server')
+		
+		console.log("*** Sent User Presence Update ***") 
+		console.log(JSON.stringify({
+			user: getGenericUserObject(), 
+			channel: getGenericRoomObject(rid), 
+			lastActivity: Date.now
+		}))
+		
+	}, 30000)
+}
+
 callbacks.add('enter-room', wipeFailedUploads);
 
 const ignoreReplies = getConfig('ignoreReplies') === 'true';
@@ -1355,6 +1494,8 @@ Template.room.onDestroyed(function() {
 		this.rolesObserve.stop();
 	}
 
+	stopSocvidUserPresence();
+
 	readMessage.off(this.data._id);
 
 	window.removeEventListener('resize', this.onWindowResize);
@@ -1449,30 +1590,8 @@ Template.room.onRendered(function() {
 
 	const rtl = $('html').hasClass('rtl');
 
-		/* iBroadcast responsive player */
-		$("#the-player").height(parseInt(
-			$("#the-player").width() * 9 / 16))
-
-		$("window").on("resize", (e) => { 
-			$("#the-player").height(parseInt(
-				$("#the-player").width() * 9 / 16))
-		})
-
-
-		/* Jitsi desktop embed */
-		if (screen.width >= 800){
-			const domain = 'meet.jit.si';
-			const options = {
-				roomName: this.data.name || rid,
-				width: '100%',
-				height:'100%',
-				parentNode: document.querySelector('#desktop-jitsi-container'),
-				interfaceConfigOverride: jitsiInterfaceConfig
-			};
-			//window["JITSI_CURRENT_ROOM"] = new JitsiMeetExternalAPI(domain, options);
-	
-		}
-	
+	initSocvidUI(this);	
+	startSocvidUserPresence(rid);
 
 	const getElementFromPoint = function(topOffset = 0) {
 		const messageBoxOffset = messageBox.offset();
