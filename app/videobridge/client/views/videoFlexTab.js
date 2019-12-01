@@ -27,12 +27,18 @@ Template.videoFlexTab.onRendered(function() {
 	const rid = Session.get('openedRoom');
 
 	const width = 'auto';
-	const height = 500;
+	const height = window.innerHeight - 200;
 
 	const configOverwrite = {
 		desktopSharingChromeExtId: settings.get('Jitsi_Chrome_Extension'),
 	};
-	const interfaceConfigOverwrite = {};
+	const interfaceConfigOverwrite = {
+		filmStripOnly: true,
+		SHOW_JITSI_WATERMARK: false,
+		GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
+		DISPLAY_WELCOME_PAGE_CONTENT: false,
+	
+	};
 
 	let jitsiRoomActive = null;
 
@@ -148,14 +154,18 @@ Template.videoFlexTab.onRendered(function() {
 				// Keep it from showing duplicates when re-evaluated on variable change.
 				const name = Users.findOne(Meteor.userId(), { fields: { name: 1 } });
 				if (!$('[id^=jitsiConference]').length) {
-					this.api = new JitsiMeetExternalAPI(domain, jitsiRoom, width, height, this.$('.video-container').get(0), configOverwrite, interfaceConfigOverwrite, noSsl, accessToken);
+					this.api = new JitsiMeetExternalAPI(domain, 'SVN 				Live'+jitsiRoom, width, height, this.$('.video-container').get(0), configOverwrite, interfaceConfigOverwrite, noSsl, accessToken);
 
 					/*
 					* Hack to send after frame is loaded.
 					* postMessage converts to events in the jitsi meet iframe.
 					* For some reason those aren't working right.
 					*/
-					Meteor.setTimeout(() => this.api.executeCommand('displayName', [name]), 5000);
+					Meteor.setTimeout(() => {
+						this.api.executeCommand('displayName', [name])
+						this.api.executeCommand('subject', '')
+
+					}, 5000);
 					return start();
 				}
 

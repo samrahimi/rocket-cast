@@ -307,9 +307,17 @@ const getGenericRoomObject = (rid) => {
 	}
 }
 const stopSocvidUserPresence = () => {
-	clearInterval(window["SV_PRESENCE"])
+	//UserPresenceDaemon.getDefaultInstance(true, getGenericUserObject(), getGenericRoomObject(rid))
+	//clearInterval(window["SV_PRESENCE"])
 }
-const startSocvidUserPresence = (rid) => {
+const updateSocvidUserPresence = (rid) => {
+
+	//gets or creates the user presence monitor, gives it the latest user and room info, and starts the update thread
+	var presence = UserPresenceDaemon.getDefaultInstance(true, getGenericUserObject(), getGenericRoomObject(rid))
+
+	//DEBUG: dump the state of the user presence daemon
+	console.log("*** ROOM: updated state of UserPresenceDaemon global instance, new state is below")
+	//console.log(JSON.stringify(presence, null, 2))
 
 	//We create a global instance of the Dispatcher 
 	//which creates a socket connection to the SocVid Admin server
@@ -324,6 +332,8 @@ const startSocvidUserPresence = (rid) => {
 	//anything about Dispatchers and websockets, e.g. $("body").on("SVDispatchReceived", (e) => {
 	//	console.log(e.detail)
 	//})
+
+	/*
 	window["SV_DISPATCH"] = new Dispatcher(
 	'socvid.chat', 
 	rid, 
@@ -335,13 +345,15 @@ const startSocvidUserPresence = (rid) => {
 			bubbles: true,
 			detail: message
 		}));
-	})
+	}) */
 
 	//Every 30 seconds, tell the socvid server that the user is 
 	//still on the page and therefore is watching the channel... 
 	//
 	//There is no need to tell the server when the user leaves the room;
 	//just call clearInterval to make sure it stops sending "i'm still here" 
+
+	/*
 	window["SV_PRESENCE"] = setInterval(() => {
         
 		window["SV_DISPATCH"].Dispatch(
@@ -360,7 +372,7 @@ const startSocvidUserPresence = (rid) => {
 			lastActivity: Date.now
 		}))
 		
-	}, 30000)
+	}, 30000) */
 }
 
 callbacks.add('enter-room', wipeFailedUploads);
@@ -1590,8 +1602,16 @@ Template.room.onRendered(function() {
 
 	const rtl = $('html').hasClass('rtl');
 
+	//do a bunch of hacky shit required to setup the video player etc
 	initSocvidUI(this);	
-	startSocvidUserPresence(rid);
+
+	//inform the user presence module that we've loaded a new channel
+	//the 5s delay is needed so that the browser can finish loading the page 
+	//and provide a correct location.href when asked by the user presence updater
+	Meteor.setTimeout(() => {
+		updateSocvidUserPresence(rid);
+	}, 5000)
+	
 
 	const getElementFromPoint = function(topOffset = 0) {
 		const messageBoxOffset = messageBox.offset();
