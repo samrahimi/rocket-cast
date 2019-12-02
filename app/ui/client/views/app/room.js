@@ -224,6 +224,88 @@ function roomMaxAge(room) {
 	}
 }
 
+
+/* Returns an array of real time user data, each element looks like this: 
+	{
+		"anonymous": false,
+		"user_id": "8EGJZh3RdjwNZWtvd",
+		"profile_url": "https://chat.socvid.net/direct/alex.hartman.adams",
+		"system_id": "socvid.chat",
+		"username": "alex.hartman.adams",
+		"display_name": "Alex Hartman Adams",
+		"avatar_url": "https://chat.socvid.net/avatar/alex.hartman.adams",
+		"last_activity": 1575250227380 
+	} */
+
+
+const getThumbnailHtml = (viewers) => {
+	let maxAge = 86400 * 1000
+	let thumbs = ``
+
+	viewers.forEach(viewer => {
+		thumbs += 
+		`<a title="${viewer.display_name}" href="${viewer.profile_url}" target="_blank">
+			<img alt="Picture of ${viewer.display_name}" src="${viewer.avatar_url}" />
+		</a>`
+	})
+
+	return `			
+	<style>
+	.nowWatching {
+		width:100%;
+		height: 100%;
+		padding:10px;
+	}
+	.nowWatching .headerText {
+		font-size:16px; color:#eeeeee; font-weight:bold;
+	}
+	.nowWatching img {
+		width: 64px; 
+		height: 64px; 
+		padding: ${screen.width >= 800 ? '10px': '5px'}; 
+		float: left;
+		border: none; 
+		cursor: pointer;
+	}
+	</style>
+
+	<div class="nowWatching">
+		<div class="headerText">Now Watching (${viewers.length} total)</div>
+		${thumbs}
+	</div>`
+}
+
+window["SV_NOW_WATCHING_THREAD"] = 0
+
+const updateWhosWatchingGallery = (rid, targetDiv) => {
+	const roomData = Session.get(`roomData${ rid }`);
+	if (roomData.t != 'c') return
+
+	var roomName= roomData ? roomTypes.getRoomName(roomData.t, roomData) : '';
+	
+	const recentViewersApi = `https://samrahimi.com/channel/${roomName}/viewers`
+
+	$.get(recentViewersApi, (recentViewers) => {
+		console.log("Latest viewer data for "+roomName) 
+		console.log(JSON.stringify(recentViewers, null, 2))
+
+		//when you've been coding 30 hours straight, jquery is a godsend
+		$(targetDiv).html(getThumbnailHtml(recentViewers))
+	})
+}
+
+const startWhosWatchingUI = (rid) => {
+	Meteor.clearInterval(window["SV_NOW_WATCHING_THREAD"])
+	window["SV_NOW_WATCHING_THREAD"] = 0
+	let containerDiv = 
+		(screen.width >= 800 ? "#desktop-jitsi-container" : "#mobile-viewer-thumbs")
+
+	updateWhosWatchingGallery(rid, containerDiv)
+	window["SV_NOW_WATCHING_THREAD"] = Meteor.setInterval(() => {
+		updateWhosWatchingGallery(rid,containerDiv)
+	}, 30000)
+}
+
 //Random DOM-related stuff to do when
 //loading the socvid player and the socvid-specific Jisti embed
 //basically stuff that is being done outside of Meteor
@@ -241,6 +323,8 @@ const initSocvidUI = (roomInstance) => {
 
 
 	/* Jitsi desktop embed */
+
+	/*
 	if (screen.width >= 800){
 		const domain = 'meet.jit.si';
 		const options = {
@@ -250,10 +334,15 @@ const initSocvidUI = (roomInstance) => {
 			parentNode: document.querySelector('#desktop-jitsi-container'),
 			interfaceConfigOverride: jitsiInterfaceConfig
 		};
-		//window["JITSI_CURRENT_ROOM"] = new JitsiMeetExternalAPI(domain, options);
-	}
-}
+		window["JITSI_CURRENT_ROOM"] = new JitsiMeetExternalAPI(domain, options);
+	} */
 
+	//get current+recent viewers and set update timer
+	//todo: pubsub over socket.io
+
+	startWhosWatchingUI(rid, $("#desktop-jitsi-container"))
+
+}
 //Create a generic SocVid user object from the currently logged in user
 //The SocVid servers have no idea about Meteor or the chat.socvid.net database
 //and expect user data to have everything it needs for rendering 

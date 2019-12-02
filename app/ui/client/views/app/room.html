@@ -189,7 +189,22 @@
 							</div>
 							<footer class="footer border-component-color">
 								{{> messageBox messageboxData}}
-							</footer>
+
+								{{#unless embeddedVersion}}
+								{{#unless widescreen}}
+								<style> 
+									#mobile-viewer-thumbs
+									{
+										width:100%; height:74px; overflow:hidden; background-color:#1E232A;
+									}
+									#mobile-viewer-thumbs .nowWatching  .headerText {
+										display:none !important;
+									}
+								</style>
+								<div id="mobile-viewer-thumbs"></div>
+								{{/unless}}
+								{{/unless}}
+								</footer>
 						</div>
 						{{#with flexData}}
 							{{> contextualBar}}
