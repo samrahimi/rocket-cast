@@ -246,6 +246,7 @@ const getThumbnailHtml = (viewers) => {
 		thumbs += 
 		`<a title="${viewer.display_name}" href="${viewer.profile_url}" target="_blank">
 			<img alt="Picture of ${viewer.display_name}" src="${viewer.avatar_url}" />
+			${false ? '<div class="greenDot"></div>': ''}
 		</a>`
 	})
 
@@ -257,7 +258,17 @@ const getThumbnailHtml = (viewers) => {
 		padding:10px;
 	}
 	.nowWatching .headerText {
-		font-size:16px; color:#eeeeee; font-weight:bold;
+		font-size:14px; color:#eeeeee; font-weight:bold;
+	}
+	.nowWatching .greenDot {
+		background-color: lawngreen;
+		border-radius: 50%;
+		width: 7px;
+		height: 7px;
+		position: relative;
+		/* left: 10px; */
+		top: 45px;
+		left: 45px;	
 	}
 	.nowWatching img {
 		width: 64px; 
@@ -270,7 +281,7 @@ const getThumbnailHtml = (viewers) => {
 	</style>
 
 	<div class="nowWatching">
-		<div class="headerText">Now Watching (${viewers.length} total)</div>
+		<div class="headerText">👁️‍🗨️ Recent Viewers (${viewers.length} Watching Now)</div>
 		${thumbs}
 	</div>`
 }
@@ -303,7 +314,7 @@ const startWhosWatchingUI = (rid) => {
 	updateWhosWatchingGallery(rid, containerDiv)
 	window["SV_NOW_WATCHING_THREAD"] = Meteor.setInterval(() => {
 		updateWhosWatchingGallery(rid,containerDiv)
-	}, 30000)
+	}, 10000)
 }
 
 //Random DOM-related stuff to do when
@@ -340,7 +351,6 @@ const initSocvidUI = (roomInstance) => {
 	//get current+recent viewers and set update timer
 	//todo: pubsub over socket.io
 
-	startWhosWatchingUI(rid, $("#desktop-jitsi-container"))
 
 }
 //Create a generic SocVid user object from the currently logged in user
@@ -1695,11 +1705,18 @@ Template.room.onRendered(function() {
 	initSocvidUI(this);	
 
 	//inform the user presence module that we've loaded a new channel
-	//the 5s delay is needed so that the browser can finish loading the page 
+	//the delay is needed so that the browser can finish loading the page 
 	//and provide a correct location.href when asked by the user presence updater
 	Meteor.setTimeout(() => {
 		updateSocvidUserPresence(rid);
-	}, 5000)
+	}, 2000)
+
+
+	//assume the update's made it over the socket
+	//we need to switch to pubsub!
+	Meteor.setTimeout(() => {
+		startWhosWatchingUI(rid)
+	}, 3500)
 	
 
 	const getElementFromPoint = function(topOffset = 0) {

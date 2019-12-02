@@ -49,7 +49,7 @@
 			<div class="rc-user-info__row">
 				<div class="rc-input">
 					<label class="rc-input__label">
-						<div class="rc-input__title">{{_ label}}{{equal default value '*'}}</div>
+						<div class="rc-input__title">Avatar URL (JPG or PNG) {{equal default value '*'}}</div>
 						<div class="rc-input__wrapper">
 							<input type="text" name="avatarUrl" value="{{value}}" class="rc-input__element js-input" disabled="{{./disabled}}"/>
 						</div>
@@ -394,7 +394,6 @@
 								{{_ "Room_archived"}}
 							</div>
 							{{/if}}
-							<img class="avatar-image" src="{{avatarUrl}}" /> 
 							{{> avatar url=avatarUrl}}
 						</div>
 					{{/if}}

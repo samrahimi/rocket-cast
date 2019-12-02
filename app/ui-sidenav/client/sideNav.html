@@ -6,8 +6,17 @@
 			</style>
 			{{> sidebarHeader }}
 		{{/if}}
+
+		<div style="padding-top: 20px"  class="rooms-list channel-surfer" aria-label="Channel Surfer" role="region">
+				<div class="wrapper">
+					{{> roomList anonymous=true channelSurfer=true label="Channel Surfer" }}
+				</div>
+		</div>
+
 		{{#if loggedInUser}}
-			<div class="unread-rooms 
+			<div 
+
+			class="unread-rooms 
 			background-primary-action-color color-primary-action-contrast top-unread-rooms hidden">
 				{{_ "More_unreads"}} <i class="icon-up-big"></i>
 			</div>

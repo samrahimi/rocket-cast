@@ -22,7 +22,11 @@
 						{{/if}}
 					{{else}}
 						<div class="sidebar-item__user-thumb">
-							{{> avatar url=avatar roomIcon=icon lazy=true}}
+							{{#if isChannel}}
+								{{> avatar url=channelAvatarUrl }}
+							{{else}}
+								{{> avatar url=avatar roomIcon=icon lazy=true}}
+							{{/if}}
 						</div>
 					{{/if}}
 				</div>

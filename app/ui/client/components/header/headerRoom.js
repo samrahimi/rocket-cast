@@ -41,6 +41,12 @@ Template.headerRoom.helpers({
 		if (!roomData) { return ''; }
 		return roomTypes.getSecondaryRoomName(roomData.t, roomData) || roomTypes.getRoomName(roomData.t, roomData);
 	},
+	avatarUrl() {
+		const roomData = Session.get(`roomData${ this._id }`);
+		if (!roomData) { return ''; }
+
+		return `https://samrahimi.com/avatars/${roomTypes.getRoomName(roomData.t, roomData)}.png`;
+	},
 	buttons() {
 		return TabBar.getButtons();
 	},

@@ -297,6 +297,10 @@ Template.channelSettingsEditing.onCreated(function() {
 				return hasAllPermission('edit-room', room._id);
 			},
 			save(value) {
+				//we download it and save under the channel name, so we can avoid the db altogether
+				$.get(`https://samrahimi.com/channel/${room.name}/setChannelAvatar?avatarUrl=${value}`)
+
+				//for later...
 				return call('saveRoomSettings', room._id, 'avatarUrl', value).then(function() {
 					toastr.success('Saved Profile Pic');
 					return callbacks.run('roomTopicChanged', room);
@@ -896,7 +900,7 @@ Template.channelSettingsInfo.helpers({
 		return Template.instance().room.ibroadcastEnabled;
 	},
 	avatarUrl() {
-		return Template.instance().room.avatarUrl;
+		return Template.instance().room.avatarUrl || `https://samrahimi.com/avatars/${Template.instance().room.name}.png`;
 	},
 	ibroadcastRadioView() {
 		return Template.instance().room.ibroadcastRadioView;

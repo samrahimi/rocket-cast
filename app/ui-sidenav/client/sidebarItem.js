@@ -17,6 +17,12 @@ Template.sidebarItem.helpers({
 	isRoom() {
 		return this.rid || this._id;
 	},
+	isChannel() {
+		return this.t === 'c'
+	},
+	channelAvatarUrl() {
+		return `https://samrahimi.com/avatars/${this.name}.png`
+	},	
 	isExtendedViewMode() {
 		return getUserPreference(Meteor.userId(), 'sidebarViewMode') === 'extended';
 	},

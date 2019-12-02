@@ -43,6 +43,9 @@ function directorySearch(config, cb) {
 }
 
 Template.directory.helpers({
+	getAvatarUrlForChannel(channelName) {
+		return `https://samrahimi.com/avatars/${channelName}.png`
+	},
 	federationEnabled() {
 		return settings.get('FEDERATION_Enabled');
 	},
