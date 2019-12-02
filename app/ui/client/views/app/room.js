@@ -302,7 +302,7 @@ const getGenericRoomObject = (rid) => {
 			channel_type: roomData.t,
 			channel_name: roomName,
 			channel_url: "https://chat.socvid.net/channel/"+roomName,
-			avatar_url: "https://chat.socvid.net/images/socvid/unknown_user.png",
+			avatar_url: "https://samrahimi.com/avatars/"+roomName+".png",
 		}
 	}
 }
