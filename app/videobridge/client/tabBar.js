@@ -48,7 +48,7 @@ Meteor.startup(function() {
 				iconColor: 'red',
 				template: 'videoFlexTab',
 				width: 600,
-				order: 12,
+				order: 1,
 			});
 		} else {
 			TabBar.removeButton('video');

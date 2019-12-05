@@ -16,16 +16,18 @@
 		</style>
 		
 		<div class="main-content-flex">
-				{{#if widescreen}}
-				<div class="main-content-flex flex-tab-main-content {{adminClass}}" style="flex-direction:column; background-color:black">
-						<div class="ibroadcast-is-back-u-hamster">
-								{{{ socvidPlayerUrl }}}
-						</div>
+				{{#if isChannel}}
+					{{#if widescreen}}
+					<div class="main-content-flex flex-tab-main-content {{adminClass}}" style="flex-direction:column; background-color:black">
+							<div class="ibroadcast-is-back-u-hamster">
+									{{{ socvidPlayerUrl }}}
+							</div>
 
-						<div id="desktop-jitsi-container" style="flex:1; width:100%">
-						</div>
+							<div id="desktop-jitsi-container" style="flex:1; width:100%">
+							</div>
 
-				</div>
+					</div>
+					{{/if}}
 				{{/if}}
 
 				<section class="messages-container" id="{{windowId}}" aria-label="{{_ "Channel"}}">
@@ -48,7 +50,8 @@
 								</div>
 								{{/if}}
 							{{/unless}}
-
+							
+							{{#if isChannel}}
 							{{#unless widescreen}}
 									<style>
 										.ibroadcast-is-back-u-hamster {
@@ -59,7 +62,7 @@
 											{{{ socvidPlayerUrl }}}
 									</div>
 							{{/unless}}
-					
+							{{/if}}
 
 							<div class="container-bars {{containerBarsShow unreadData uploading}}">
 								{{#with unreadData}}
@@ -190,7 +193,7 @@
 							<footer class="footer border-component-color">
 								{{> messageBox messageboxData}}
 
-								{{#unless embeddedVersion}}
+								{{#if isChannel}}
 								{{#unless widescreen}}
 								<style> 
 									#mobile-viewer-thumbs
@@ -203,7 +206,7 @@
 								</style>
 								<div id="mobile-viewer-thumbs"></div>
 								{{/unless}}
-								{{/unless}}
+								{{/if}}
 								</footer>
 						</div>
 						{{#with flexData}}

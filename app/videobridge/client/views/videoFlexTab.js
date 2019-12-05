@@ -33,7 +33,6 @@ Template.videoFlexTab.onRendered(function() {
 		desktopSharingChromeExtId: settings.get('Jitsi_Chrome_Extension'),
 	};
 	const interfaceConfigOverwrite = {
-		filmStripOnly: true,
 		SHOW_JITSI_WATERMARK: false,
 		GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
 		DISPLAY_WELCOME_PAGE_CONTENT: false,
@@ -154,7 +153,7 @@ Template.videoFlexTab.onRendered(function() {
 				// Keep it from showing duplicates when re-evaluated on variable change.
 				const name = Users.findOne(Meteor.userId(), { fields: { name: 1 } });
 				if (!$('[id^=jitsiConference]').length) {
-					this.api = new JitsiMeetExternalAPI(domain, 'SVN 				Live'+jitsiRoom, width, height, this.$('.video-container').get(0), configOverwrite, interfaceConfigOverwrite, noSsl, accessToken);
+					this.api = new JitsiMeetExternalAPI(domain, 'SVNLive'+jitsiRoom, width, height, this.$('.video-container').get(0), configOverwrite, interfaceConfigOverwrite, noSsl, accessToken);
 
 					/*
 					* Hack to send after frame is loaded.

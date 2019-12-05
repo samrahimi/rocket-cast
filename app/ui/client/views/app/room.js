@@ -616,7 +616,12 @@ Template.room.helpers({
 		if (!room) { return ''; }
 		return room.announcementDetails && room.announcementDetails.style !== undefined ? room.announcementDetails.style : '';
 	},
+	isChannel() {
+		const roomData = Session.get(`roomData${ this._id }`);
+        if (!roomData) { return false; }
 
+		return (roomData.t =='c')
+	},
 	roomIcon() {
 		const { room } = Template.instance();
 		if (!(room != null ? room.t : undefined)) { return ''; }
