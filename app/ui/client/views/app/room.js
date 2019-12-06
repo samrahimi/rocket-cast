@@ -237,7 +237,76 @@ function roomMaxAge(room) {
 		"last_activity": 1575250227380 
 	} */
 
+const getChannelSurferViewerString = (channel) => {
+ 	var html = ''
+		channel.currentViewers.forEach((viewer) => { html += `<img data-name="${viewer.username}" alt="${viewer.display_name}" class="channel_surfer_minithumb" src="${viewer.avatar_url}"  /> &nbsp;`})
 
+	return html;
+
+}
+	const getChannelSurferHtml = (channels) => {
+		var html = ""
+
+		channels.forEach(channel => 
+			{
+				html+= `
+		<li class="sidebar-item js-sidebar-type-c" data-id="" style="height:64px">
+				<a class="sidebar-item__link" href="/channel/${channel.channel_name}" aria-label="${channel.channel_name}" style="align-items: start; -webkit-box-align: start">
+			
+			
+					<div class="sidebar-item__picture" style="flex: 0 0 48px; width:48px; height:48px">
+			
+						<div class="sidebar-item__user-thumb" style="width:48px; height:48px">
+			
+							<div class="avatar">
+			
+								<img src="https://samrahimi.com/avatars/${channel.channel_name}.png" class="avatar-image">
+			
+							</div>
+			
+						</div>
+			
+					</div>
+			
+					<div class="sidebar-item__body">
+						<div class="sidebar-item__message" style="height:48px">
+
+
+
+							<div class="sidebar-item__message-top">
+								<div class="sidebar-item__name">
+									<div class="sidebar-item__room-type">
+										<svg class="rc-icon rc-icon--default-size sidebar-item__icon sidebar-item__icon--hashtag"
+											aria-hidden="true">
+											<use xlink:href="#icon-hashtag"></use>
+										</svg>
+									</div>
+			
+									<div class="sidebar-item__ellipsis">
+										${channel.channel_name}
+									</div>
+			
+								</div>
+								<span class="sidebar-item__time"></span>
+							</div>
+
+							<div class="sidebar-item__message-bottom" style="width:100%">
+							${getChannelSurferViewerString(channel)}
+						</div>
+
+
+
+						</div>	
+					</div>
+
+
+				</a>
+			</li>
+			`})
+
+		return html
+	}
+	
 const getThumbnailHtml = (viewers) => {
 	let maxAge = 86400 * 1000
 	let thumbs = ``
@@ -286,35 +355,39 @@ const getThumbnailHtml = (viewers) => {
 	</div>`
 }
 
-window["SV_NOW_WATCHING_THREAD"] = 0
 
-const updateWhosWatchingGallery = (rid, targetDiv) => {
-	const roomData = Session.get(`roomData${ rid }`);
-	if (roomData.t != 'c') return
 
-	var roomName= roomData ? roomTypes.getRoomName(roomData.t, roomData) : '';
-	
-	const recentViewersApi = `https://samrahimi.com/channel/${roomName}/viewers`
-
-	$.get(recentViewersApi, (recentViewers) => {
-		console.log("Latest viewer data for "+roomName) 
-		console.log(JSON.stringify(recentViewers, null, 2))
-
-		//when you've been coding 30 hours straight, jquery is a godsend
-		$(targetDiv).html(getThumbnailHtml(recentViewers))
-	})
+const onSVDispatch = (e) => {
+	console.log("*** SVDispatchReceived ")
+	console.log(JSON.stringify(e, null, 2))
 }
 
+//when channel_viewers events come down the socket
+//we can update the viewer gallery. no need for REST calls!
 const startWhosWatchingUI = (rid) => {
+
+	$(document).off("SVDispatchReceived")
+	$(document).on("SVDispatchReceived", (e) => {
+		if (e.detail.type && e.detail.type == "channel_viewers") {
+			var containerDiv = (screen.width >= 800 ? "#desktop-jitsi-container" : "#mobile-viewer-thumbs")
+			$(containerDiv).html(getThumbnailHtml(e.detail.payload))
+		}
+
+		if (e.detail.type && e.detail.type == "channel_surfer") {
+			var containerDiv = "#sidebar_channel_surfer"
+			$(containerDiv).html(getChannelSurferHtml(e.detail.payload))
+		}
+	})
+
+	/*
+	
 	Meteor.clearInterval(window["SV_NOW_WATCHING_THREAD"])
 	window["SV_NOW_WATCHING_THREAD"] = 0
-	let containerDiv = 
-		(screen.width >= 800 ? "#desktop-jitsi-container" : "#mobile-viewer-thumbs")
 
 	updateWhosWatchingGallery(rid, containerDiv)
 	window["SV_NOW_WATCHING_THREAD"] = Meteor.setInterval(() => {
 		updateWhosWatchingGallery(rid,containerDiv)
-	}, 10000)
+	}, 10000) */
 }
 
 //Random DOM-related stuff to do when
@@ -1713,16 +1786,9 @@ Template.room.onRendered(function() {
 	//the delay is needed so that the browser can finish loading the page 
 	//and provide a correct location.href when asked by the user presence updater
 	Meteor.setTimeout(() => {
-		updateSocvidUserPresence(rid);
-	}, 2000)
-
-
-	//assume the update's made it over the socket
-	//we need to switch to pubsub!
-	Meteor.setTimeout(() => {
 		startWhosWatchingUI(rid)
-	}, 3500)
-	
+		updateSocvidUserPresence(rid);
+	}, 2000)	
 
 	const getElementFromPoint = function(topOffset = 0) {
 		const messageBoxOffset = messageBox.offset();

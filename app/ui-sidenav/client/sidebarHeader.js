@@ -225,7 +225,8 @@ const toolbarButtons = (user) => [
 		};
 		popover.open(config);
 	},
-},
+}
+/*,
 {
 	name: t('Options'),
 	icon: 'settings',
@@ -291,8 +292,8 @@ const toolbarButtons = (user) => [
 		};
 
 		popover.open(config);
-	},
-}];
+	}, 
+} */]; 
 Template.sidebarHeader.helpers({
 	mainNav() {
 		return this.overlay != null;

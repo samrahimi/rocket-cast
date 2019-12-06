@@ -5,18 +5,28 @@
 			width:32px !important;
 			height:32px !important;
 		}
+		.sidebar-header-socvid {
+			padding:15px !important; 
+			height: 60px !important;
+		}
+		.svn-text {
+			flex: 2; padding:0px 10px 0px 0px; color: #cccccc; font-weight:bold; font-size:24px
+		}
+
 	</style>
-	<header class="sidebar__header" style="padding:15px; height: 40px;">
-			<div style="flex: 0 0 70px; padding:5px 0px 0px 15px">
+	<header class="sidebar__header sidebar-header-socvid">
+			<div style="flex: 0 0 70px; padding:0px 0px 0px 15px">
 				<a href="/directory" style="cursor:pointer">
 					<img src="https://samrahimi.com/client/img/logo-tv-large.png" width="50" style="border: none" />
 				</a>
 			</div>
 			{{#with myUserInfo}}
-
-			<div class="sidebar__toolbar">
+			<div class="svn-text">
+					SVN<span style="color:yellow">TV</span>
+			</div>
+			<div class="sidebar__toolbar" style="flex:1">
 				{{#each toolbarButtons}}
-					<button class="sidebar__toolbar-button rc-tooltip rc-tooltip--down js-button" aria-label="{{name}}" aria-haspopup="{{hasPopup}}">
+					<button style="font-size: 24px;" class="sidebar__toolbar-button rc-tooltip rc-tooltip--down js-button" aria-label="{{name}}" aria-haspopup="{{hasPopup}}">
 						{{> icon block="sidebar__toolbar-button-icon" icon=icon }}
 					</button>
 				{{/each}}
