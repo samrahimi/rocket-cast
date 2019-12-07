@@ -51,6 +51,8 @@ const openMembersListTab = (instance, group) => {
 	instance.tabBar.open();
 };
 
+
+
 const openProfileTab = (e, instance, username) => {
 	if (Layout.isEmbedded()) {
 		fireGlobalEvent('click-user-card-message', { username });
@@ -307,52 +309,23 @@ const getChannelSurferViewerString = (channel) => {
 		return html
 	}
 	
-const getThumbnailHtml = (viewers) => {
+const getThumbnailHtml = (viewers, roomInstance) => {
+	viewers.reverse() //truelife server is sorting backwards, TODO fix presenceController
 	let maxAge = 86400 * 1000
 	let thumbs = ``
 
 	viewers.forEach(viewer => {
 		thumbs += 
-		`<a title="${viewer.display_name}" href="${viewer.profile_url}" target="_blank">
+		`<a class="recentViewer" title="${viewer.display_name}" href="${viewer.profile_url}" target="_blank">
 			<img alt="Picture of ${viewer.display_name}" src="${viewer.avatar_url}" />
-			${false ? '<div class="greenDot"></div>': ''}
+			${Date.now() - viewer.last_activity < maxAge ? '<div class="status-bullet-online"></div>': ''}
 		</a>`
 	})
 
-	return `			
-	<style>
-	.nowWatching {
-		width:100%;
-		height: 100%;
-		padding:10px;
-	}
-	.nowWatching .headerText {
-		font-size:14px; color:#eeeeee; font-weight:bold;
-	}
-	.nowWatching .greenDot {
-		background-color: lawngreen;
-		border-radius: 50%;
-		width: 7px;
-		height: 7px;
-		position: relative;
-		/* left: 10px; */
-		top: 45px;
-		left: 45px;	
-	}
-	.nowWatching img {
-		width: 64px; 
-		height: 64px; 
-		padding: ${screen.width >= 800 ? '10px': '5px'}; 
-		float: left;
-		border: none; 
-		cursor: pointer;
-	}
-	</style>
+	let onlineNow = viewers.filter(x => Date.now() - x.last_activity < maxAge).length
+	roomInstance.activeViewerCount.set(onlineNow)
 
-	<div class="nowWatching">
-		<div class="headerText">👁️‍🗨️ Recent Viewers (${viewers.length} Watching Now)</div>
-		${thumbs}
-	</div>`
+	return thumbs;
 }
 
 
@@ -362,15 +335,24 @@ const onSVDispatch = (e) => {
 	console.log(JSON.stringify(e, null, 2))
 }
 
-//when channel_viewers events come down the socket
-//we can update the viewer gallery. no need for REST calls!
-const startWhosWatchingUI = (rid) => {
-
+const recalculatePlayerHeight = () => {
+		/* iBroadcast responsive player */
+		$("#the-player").height(parseInt(
+			$("#the-player").width() * 9 / 16))
+	
+		$("window").on("resize", (e) => { 
+			$("#the-player").height(parseInt(
+				$("#the-player").width() * 9 / 16))
+		})	
+}
+//listen for server pushing the list of who's watching this channel
+//or the most active channels for realtime update in the left sidebar
+const startWhosWatchingUI = (rid, roomInstance) => {
+	let isFirstLoad = true
 	$(document).off("SVDispatchReceived")
 	$(document).on("SVDispatchReceived", (e) => {
 		if (e.detail.type && e.detail.type == "channel_viewers") {
-			var containerDiv = (screen.width >= 800 ? "#desktop-jitsi-container" : "#mobile-viewer-thumbs")
-			$(containerDiv).html(getThumbnailHtml(e.detail.payload))
+			$(".activeUserThumbs").html(getThumbnailHtml(e.detail.payload, roomInstance))
 		}
 
 		if (e.detail.type && e.detail.type == "channel_surfer") {
@@ -378,16 +360,6 @@ const startWhosWatchingUI = (rid) => {
 			$(containerDiv).html(getChannelSurferHtml(e.detail.payload))
 		}
 	})
-
-	/*
-	
-	Meteor.clearInterval(window["SV_NOW_WATCHING_THREAD"])
-	window["SV_NOW_WATCHING_THREAD"] = 0
-
-	updateWhosWatchingGallery(rid, containerDiv)
-	window["SV_NOW_WATCHING_THREAD"] = Meteor.setInterval(() => {
-		updateWhosWatchingGallery(rid,containerDiv)
-	}, 10000) */
 }
 
 //Random DOM-related stuff to do when
@@ -395,16 +367,61 @@ const startWhosWatchingUI = (rid) => {
 //basically stuff that is being done outside of Meteor
 const initSocvidUI = (roomInstance) => {
 	const { _id: rid } = roomInstance.data;
+	recalculatePlayerHeight()
 
-	/* iBroadcast responsive player */
-	$("#the-player").height(parseInt(
-		$("#the-player").width() * 9 / 16))
+	/* Social Fullscreen Hook */
+	document.fullscreenEnabled =
+	document.fullscreenEnabled ||
+	document.mozFullScreenEnabled ||
+	document.documentElement.webkitRequestFullScreen;
 
-	$("window").on("resize", (e) => { 
-		$("#the-player").height(parseInt(
-			$("#the-player").width() * 9 / 16))
-	})
+	/* globally available fullscreen */
+	window["FS"] = {
+		requestFullscreen: (element) => {
+			if (element.requestFullscreen) {
+			element.requestFullscreen();
+			} else if (element.mozRequestFullScreen) {
+			element.mozRequestFullScreen();
+			} else if (element.webkitRequestFullScreen) {
+			element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
+		}
+	}
+	window.FS.toggleSocialFullscreen = () => {
+		if (document.fullscreenEnabled && document.fullscreenElement) {
+			// exitFullscreen is only available on the Document object.
+			console.log("*** FS-SOCIAL CLICK, LEAVE FULLSCREEN")
+			document.exitFullscreen();
+		  } else {
+			console.log("*** FS-SOCIAL CLICK, ENTER FULLSCREEN")
+			var el = $(".fs-social-content")[0]
+			if (document.fullscreenEnabled)
+				window.FS.requestFullscreen(el)
+			else
+				console.log("*** ROOM.JS 891: cannot load the fullscreen API, try another browser or device")
+			return false;
+		  }
+	}
 
+
+	/* event listener for going in and out of fullscreen, so we can recalculate some dimensions */
+	$('.fs-social-content').on('fullscreenchange', (event) => {
+		// document.fullscreenElement will point to the element that
+		// is in fullscreen mode if there is one. If not, the value
+		// of the property is null.
+		if (document.fullscreenElement) {
+		  console.log(`*** FS: Element: ${document.fullscreenElement.id} entered fullscreen mode.`);
+		  $("body").addClass("social-fs")
+		} else {
+		  console.log('*** FS: Leaving full-screen mode.');
+		  $("body").removeClass("social-fs")
+
+		}
+
+		//Wait a smidge so that the player's width gets updated before we try to calculate the height
+		Meteor.setTimeout(recalculatePlayerHeight, 250)
+	});
+	  
 
 	/* Jitsi desktop embed */
 
@@ -854,7 +871,7 @@ Template.room.helpers({
         var roomName= roomTypes.getRoomName(roomData.t, roomData);
 		console.log(JSON.stringify(roomData, null, 2))
     
-		return `<iframe id="the-player" src="https://samrahimi.com/client/video.html?channel=${roomName}&dev=false" allow="autoplay" style="border:0;overflow:hidden;width:100%"></iframe>`;
+		return `<iframe id="the-player" src="https://samrahimi.com/client/video.html?channel=${roomName}&dev=false" allow="autoplay; fullscreen" style="border:0;overflow:hidden;width:100%"></iframe>`;
     },
 	jistiRoomUrl() {
 		const roomData = Session.get(`roomData${ this._id }`);
@@ -871,241 +888,62 @@ Template.room.helpers({
 		return `https://meet.jit.si/SocVidTV-${roomName}`
 	},
 
+	roomName() {
+		const roomData = Session.get(`roomData${ this._id }`);
+        if (!roomData) { return ''; }
+
+		var roomName= roomTypes.getRoomName(roomData.t, roomData);
+		return roomName
+
+	},
+	viewerCount() {
+		return Template.instance().activeViewerCount.get()
+	},
 	messageContext,
 });
-let jitsiInterfaceConfig = {
-    // TO FIX: this needs to be handled from SASS variables. There are some
-    // methods allowing to use variables both in css and js.
-    DEFAULT_BACKGROUND: '#474747',
 
-    /**
-     * Whether or not the blurred video background for large video should be
-     * displayed on browsers that can support it.
-     */
-    DISABLE_VIDEO_BACKGROUND: false,
 
-    INITIAL_TOOLBAR_TIMEOUT: 20000,
-    TOOLBAR_TIMEOUT: 4000,
-    TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
-    DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+//This is gonna confuse the fuck out of a future engineer if I don't explain it
+//This is NOT fullscreen for the VIDEO PLAYER. The player has a fullscreen button in its control bar
+//which it handles in it's own front end (player.js)... A useful feature, but nothing different
+//than any other video player. 
+//
+//The code below, OTOH enables a fullscreen *social* video experience:
+//When it's triggered by a click on any .fs-social button in the DOM, it will
+//fullscreen the element with class .fs-social-content
+//
+//Which is conveniently, the Player, The people watching, the chat, the chat header and tabs, and the right-side sidebar modal
 
-    // if watermark is disabled by default, it can be shown only for guests
-    SHOW_WATERMARK_FOR_GUESTS: true,
-    SHOW_BRAND_WATERMARK: false,
-    BRAND_WATERMARK_LINK: '',
-    SHOW_POWERED_BY: false,
-    SHOW_DEEP_LINKING_IMAGE: false,
-    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
-    DISPLAY_WELCOME_PAGE_CONTENT: true,
-    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'Jitsi Meet',
-    NATIVE_APP_NAME: 'Jitsi Meet',
-    PROVIDER_NAME: 'Jitsi',
-    LANG_DETECTION: false, // Allow i18n to detect the system language
-    INVITATION_POWERED_BY: true,
-
-    /**
-     * If we should show authentication block in profile
-     */
-    AUTHENTICATION_ENABLE: true,
-
-    /**
-     * The name of the toolbar buttons to display in the toolbar. If present,
-     * the button will display. Exceptions are "livestreaming" and "recording"
-     * which also require being a moderator and some values in config.js to be
-     * enabled. Also, the "profile" button will not display for user's with a
-     * jwt.
-     */
-    TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help'
-    ],
-
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
-
-    // Determines how the video would fit the screen. 'both' would fit the whole
-    // screen, 'height' would fit the original video height to the height of the
-    // screen, 'width' would fit the original video width to the width of the
-    // screen respecting ratio.
-    VIDEO_LAYOUT_FIT: 'both',
-
-    /**
-     * Whether to only show the filmstrip (and hide the toolbar).
-     */
-    filmStripOnly: false,
-
-    /**
-     * Whether to show thumbnails in filmstrip as a column instead of as a row.
-     */
-    VERTICAL_FILMSTRIP: true,
-
-    // A html text to be shown to guests on the close page, false disables it
-    CLOSE_PAGE_GUEST_HINT: false,
-    RANDOM_AVATAR_URL_PREFIX: false,
-    RANDOM_AVATAR_URL_SUFFIX: false,
-    FILM_STRIP_MAX_HEIGHT: 120,
-
-    // Enables feedback star animation.
-    ENABLE_FEEDBACK_ANIMATION: false,
-    DISABLE_FOCUS_INDICATOR: false,
-    DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
-
-    /**
-     * Whether the speech to text transcription subtitles panel is disabled.
-     * If {@code undefined}, defaults to {@code false}.
-     *
-     * @type {boolean}
-     */
-    DISABLE_TRANSCRIPTION_SUBTITLES: false,
-
-    /**
-     * Whether the ringing sound in the call/ring overlay is disabled. If
-     * {@code undefined}, defaults to {@code false}.
-     *
-     * @type {boolean}
-     */
-    DISABLE_RINGING: false,
-    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
-    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
-    POLICY_LOGO: null,
-    LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
-    REMOTE_THUMBNAIL_RATIO: 1, // 1:1
-    // Documentation reference for the live streaming feature.
-    LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live',
-
-    /**
-     * Whether the mobile app Jitsi Meet is to be promoted to participants
-     * attempting to join a conference in a mobile Web browser. If
-     * {@code undefined}, defaults to {@code true}.
-     *
-     * @type {boolean}
-     */
-    MOBILE_APP_PROMO: true,
-
-    /**
-     * Maximum coeficient of the ratio of the large video to the visible area
-     * after the large video is scaled to fit the window.
-     *
-     * @type {number}
-     */
-    MAXIMUM_ZOOMING_COEFFICIENT: 1.3,
-
-    /*
-     * If indicated some of the error dialogs may point to the support URL for
-     * help.
-     */
-    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
-
-    /**
-     * Whether the connection indicator icon should hide itself based on
-     * connection strength. If true, the connection indicator will remain
-     * displayed while the participant has a weak connection and will hide
-     * itself after the CONNECTION_INDICATOR_HIDE_TIMEOUT when the connection is
-     * strong.
-     *
-     * @type {boolean}
-     */
-    CONNECTION_INDICATOR_AUTO_HIDE_ENABLED: true,
-
-    /**
-     * How long the connection indicator should remain displayed before hiding.
-     * Used in conjunction with CONNECTION_INDICATOR_AUTOHIDE_ENABLED.
-     *
-     * @type {number}
-     */
-    CONNECTION_INDICATOR_AUTO_HIDE_TIMEOUT: 5000,
-
-    /**
-     * If true, hides the connection indicators completely.
-     *
-     * @type {boolean}
-     */
-    CONNECTION_INDICATOR_DISABLED: false,
-
-    /**
-     * If true, hides the video quality label indicating the resolution status
-     * of the current large video.
-     *
-     * @type {boolean}
-     */
-    VIDEO_QUALITY_LABEL_DISABLED: false,
-
-    /**
-     * If true, will display recent list
-     *
-     * @type {boolean}
-     */
-    RECENT_LIST_ENABLED: true,
-
-    // Names of browsers which should show a warning stating the current browser
-    // has a suboptimal experience. Browsers which are not listed as optimal or
-    // unsupported are considered suboptimal. Valid values are:
-    // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
-    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron' ],
-
-    // Browsers, in addition to those which do not fully support WebRTC, that
-    // are not supported and should show the unsupported browser page.
-    UNSUPPORTED_BROWSERS: [],
-
-    /**
-     * A UX mode where the last screen share participant is automatically
-     * pinned. Valid values are the string "remote-only" so remote participants
-     * get pinned but not local, otherwise any truthy value for all participants,
-     * and any falsy value to disable the feature.
-     *
-     * Note: this mode is experimental and subject to breakage.
-     */
-    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only'
-
-    /**
-     * How many columns the tile view can expand to. The respected range is
-     * between 1 and 5.
-     */
-    // TILE_VIEW_MAX_COLUMNS: 5,
-
-    /**
-     * Specify custom URL for downloading android mobile app.
-     */
-    // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
-
-    /**
-     * Specify URL for downloading ios mobile app.
-     */
-    // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-
-    /**
-     * Specify mobile app scheme for opening the app from the mobile browser.
-     */
-    // APP_SCHEME: 'org.jitsi.meet',
-
-    /**
-     * Specify the Android app package name.
-     */
-    // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
-
-    /**
-     * Override the behavior of some notifications to remain displayed until
-     * explicitly dismissed through a user action. The value is how long, in
-     * milliseconds, those notifications should remain displayed.
-     */
-    // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
-
-    // List of undocumented settings
-    /**
-     INDICATOR_FONT_SIZES
-     MOBILE_DYNAMIC_LINK
-     PHONE_NUMBER_REGEX
-    */
-};
-
+/*
 $("document").ready(() => {
-})
+	document.fullscreenEnabled =
+	document.fullscreenEnabled ||
+	document.mozFullScreenEnabled ||
+	document.documentElement.webkitRequestFullScreen;
+
+  const requestFullscreen= (element) => {
+		if (element.requestFullscreen) {
+		element.requestFullscreen();
+		} else if (element.mozRequestFullScreen) {
+		element.mozRequestFullScreen();
+		} else if (element.webkitRequestFullScreen) {
+		element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+		}
+	}
+
+	$(".fs-social").on("click", (e) => {
+		console.log("*** FS-SOCIAL CLICK")
+		var el = $(".fs-social-content")[0]
+		if (document.fullscreenEnabled)
+			requestFullScreen(el)
+		else
+			console.log("*** ROOM.JS 891: cannot load the fullscreen API, try another browser or device")
+		e.preventDefault()
+	})
+
+}) */
+
+
 let isSocialSharingOpen = false;
 let touchMoved = false;
 let lastTouchX = null;
@@ -1571,6 +1409,7 @@ Template.room.onCreated(function() {
 		});
 	});
 
+	this.activeViewerCount = new ReactiveVar(0)
 	this.showUsersOffline = new ReactiveVar(false);
 	this.atBottom = !FlowRouter.getQueryParam('msg');
 	this.unreadCount = new ReactiveVar(0);
@@ -1786,7 +1625,7 @@ Template.room.onRendered(function() {
 	//the delay is needed so that the browser can finish loading the page 
 	//and provide a correct location.href when asked by the user presence updater
 	Meteor.setTimeout(() => {
-		startWhosWatchingUI(rid)
+		startWhosWatchingUI(rid, this)
 		updateSocvidUserPresence(rid);
 	}, 2000)	
 

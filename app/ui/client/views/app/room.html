@@ -12,6 +12,15 @@
 					width: 100%;
 					height: 100%;
 				}
+				.golden-rectangle-400 {
+					flex: 0 0 33% !important;
+					min-width: 400px !important;
+				}
+
+				.social-fs .golden-rectangle-400 {
+					flex: 0 0 25% !important;
+					min-width: 400px !important;
+				}
 
 		</style>
 		
@@ -22,15 +31,120 @@
 							<div class="ibroadcast-is-back-u-hamster">
 									{{{ socvidPlayerUrl }}}
 							</div>
+							<div id="desktop-jitsi-container" style="flex:1; width:100%">			
+									<style>
+									.nowWatching {
+										margin:30px 10px 10px 10px;
+										overflow:hidden;
+									}
+									.activeUserThumbs {
+										overflow:hidden;
+									}
+									.nowWatching .headerText {
+										font-size:14px; color:#9ea2a8; font-weight:bold;
+									}
+									.nowWatching .greenDot {
+										background-color: lawngreen;
+										border-radius: 50%;
+										width: 7px;
+										height: 7px;
+										position: relative;
+										/* left: 10px; */
+										top: 45px;
+										left: 45px;	
+									}
+									.nowWatching img {
+										width: 64px; 
+										height: 64px; 
+										padding: 10px; 
+										float: left;
+										border: none; 
+										cursor: pointer;
+									}
+									.nowWatching a.recentViewer {
+										position: relative;
+										float: left;
+									}
+									.nowWatching .headerText {
+										display:flex;
 
-							<div id="desktop-jitsi-container" style="flex:1; width:100%">
-							</div>
+									}
+									.nowWatching .headerText .nowWatchingText {
+										flex: 1;
+									}
+									.nowWatching .headerText .badge.viewerCount {
+										margin-top: 5px;
+									}
+									.nowWatching .status-bullet-online {
+										background-color: #2de0a5;
+										position: relative;
+										right: 1px;
+										bottom: 1px;
+										display: block;
+										width: 10px;
+										width: var(--sidebar-account-status-bullet-size);
+										height: 10px;
+										height: var(--sidebar-account-status-bullet-size);
+										pointer-events: none;
+										border-width: 2px;
+										border-style: solid;
+										border-color: #2f343d;
+										border-color: var(--sidebar-background);
+										border-radius: 50%;
+										border-radius: var(--sidebar-account-status-bullet-radius);
+										margin-left: 45px;
+										margin-top: 10px;
+									}
+									#socialFullScreen {
+										position:absolute;
+										bottom: 20px;
+										left: 10px;
+										font-size:14px; 
+										right: 10px;
+										height: 24px;
+										color:hsl(216, 5%, 64%); 
+										font-weight:500 !important;										
+
+									}
+
+									#socialFullScreen ion-icon {
+										font-size: 20px;
+										text-decoration: none !important;
+									}
+									#socialFullScreen a.screenSelector {
+										color:#9ea2a8; 
+										cursor:pointer;
+
+									}
+									#socialFullScreen a.screenSelector:hover, #socialFullScreen a.screenSelector:active {
+										color:white; 
+										cursor:pointer;
+									}
+
+
+									</style>
+									<div id="socialFullScreen">
+											<a onclick="javascript: window.FS.toggleSocialFullscreen(); return false" class="screenSelector fs-social">
+												<ion-icon name="resize">
+												</ion-icon>
+
+												 Toggle "Social Full Screen"
+											</a>
+									</div>
+									<div class="nowWatching">
+										<h3 class="headerText">
+											<span class="nowWatchingText">People Watching #{{roomName}}</span>
+											<span class="badge viewerCount">👁️‍&nbsp;{{viewerCount}} Online</span></h3>
+										<div class="activeUserThumbs"></div>
+									</div>
+								</div>
+
 
 					</div>
 					{{/if}}
 				{{/if}}
 
-				<section class="messages-container" id="{{windowId}}" aria-label="{{_ "Channel"}}">
+				<section class="messages-container {{#if widescreen}}{{#if isChannel}}golden-rectangle-400{{/if}}{{/if}}" id="{{windowId}}" aria-label="{{_ "Channel"}}">
 					{{# unless embeddedVersion}}
 							{{# headerRoom}}
 								{{#with flexData}}
@@ -203,8 +317,61 @@
 									#mobile-viewer-thumbs .nowWatching  .headerText {
 										display:none !important;
 									}
-								</style>
-								<div id="mobile-viewer-thumbs"></div>
+									.nowWatching {
+										width:100%;
+										height: 100%;
+										padding:10px;
+									}
+									.nowWatching .headerText {
+										font-size:14px; color:#9ea2a8; font-weight:bold;
+									}
+									.nowWatching .greenDot {
+										background-color: lawngreen;
+										border-radius: 50%;
+										width: 7px;
+										height: 7px;
+										position: relative;
+										/* left: 10px; */
+										top: 45px;
+										left: 45px;	
+									}
+									.nowWatching img {
+										width: 64px; 
+										height: 64px; 
+										padding: 10px; 
+										float: left;
+										border: none; 
+										cursor: pointer;
+									}
+									.nowWatching a {
+										position:relative;
+										float:left;
+									}
+
+									.nowWatching .status-bullet-online {
+										background-color: #2de0a5;
+										position: relative;
+										right: 1px;
+										bottom: 1px;
+										display: block;
+										width: 10px;
+										width: var(--sidebar-account-status-bullet-size);
+										height: 10px;
+										height: var(--sidebar-account-status-bullet-size);
+										pointer-events: none;
+										border-width: 2px;
+										border-style: solid;
+										border-color: #2f343d;
+										border-color: var(--sidebar-background);
+										border-radius: 50%;
+										border-radius: var(--sidebar-account-status-bullet-radius);
+										margin-left: 45px;
+										margin-top: 10px;
+									}
+
+									</style>
+										
+								<div id="mobile-viewer-thumbs"><div class="nowWatching"><div class="activeUserThumbs"></div></div></div>
 								{{/unless}}
 								{{/if}}
 								</footer>

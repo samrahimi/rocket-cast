@@ -1,5 +1,6 @@
 <body class="global-font-family color-primary-font-color">
 	<div id='alert-anchor'></div>
+
 </body>
 
 <template name="main">
@@ -40,7 +41,7 @@
 									{{#unless removeSideNav}}
 										{{> sideNav }}
 									{{/unless}}
-								<div class="{{#unless $eq old false}}rc-old{{/unless}} main-content content-background-color {{readReceiptsEnabled}}">
+								<div class="fs-social-content {{#unless $eq old false}}rc-old{{/unless}} main-content content-background-color {{readReceiptsEnabled}}">
 									{{> Template.dynamic template=center}}
 								</div>
 							</div>

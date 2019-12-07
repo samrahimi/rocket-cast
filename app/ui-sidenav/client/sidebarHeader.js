@@ -225,15 +225,14 @@ const toolbarButtons = (user) => [
 		};
 		popover.open(config);
 	},
-}
-/*,
+},
 {
 	name: t('Options'),
 	icon: 'settings',
-	condition: () => AccountBox.getItems().length || hasAtLeastOnePermission(['manage-emoji', 'manage-integrations', 'manage-oauth-apps', 'manage-own-integrations', 'manage-selected-settings', 'manage-sounds', 'view-logs', 'view-privileged-setting', 'view-room-administration', 'view-statistics', 'view-user-administration', 'access-setting-permissions']),
+	condition: () => false,  //AccountBox.getItems().length || hasAtLeastOnePermission(['manage-emoji', 'manage-integrations', 'manage-oauth-apps', 'manage-own-integrations', 'manage-selected-settings', 'manage-sounds', 'view-logs', 'view-privileged-setting', 'view-room-administration', 'view-statistics', 'view-user-administration', 'access-setting-permissions']),
 	hasPopup: true,
 	action: (e) => {
-		let adminOption;
+		let adminOption, testHamsterOption;
 		if (hasAtLeastOnePermission(['manage-emoji', 'manage-integrations', 'manage-oauth-apps', 'manage-own-integrations', 'manage-selected-settings', 'manage-sounds', 'view-logs', 'view-privileged-setting', 'view-room-administration', 'view-statistics', 'view-user-administration', 'access-setting-permissions'])) {
 			adminOption = {
 				icon: 'customize',
@@ -244,6 +243,19 @@ const toolbarButtons = (user) => [
 					SideNav.setFlex('adminFlex');
 					SideNav.openFlex();
 					FlowRouter.go('admin', { group: 'info' });
+					popover.close();
+				},
+			};
+
+			testHamsterOption = {
+				icon: 'chat',
+				name: 'DMs',
+				type: 'open',
+				id: 'dms',
+				action: () => {
+					SideNav.setFlex('directory');
+					SideNav.openFlex();
+					//FlowRouter.go('admin', { group: 'info' });
 					popover.close();
 				},
 			};
@@ -282,7 +294,7 @@ const toolbarButtons = (user) => [
 									sideNav: item.sideNav,
 									action,
 								};
-							}).concat([adminOption]),
+							}).concat([adminOption, testHamsterOption]),
 						},
 					],
 				},
@@ -293,7 +305,7 @@ const toolbarButtons = (user) => [
 
 		popover.open(config);
 	}, 
-} */]; 
+} ]; 
 Template.sidebarHeader.helpers({
 	mainNav() {
 		return this.overlay != null;
