@@ -21,9 +21,22 @@ Template.sideNav.helpers({
 	footer() {
 		return String(settings.get('Layout_Sidenav_Footer')).trim();
 	},
-
+	roomTypeChannelsOnly() {
+		return roomTypes.getTypes().filter(t => t.identifier == 'c').map((roomType) => ({
+			id: roomType.identifier,
+			template: roomType.customTemplate || 'roomList',
+			data: {
+				header: roomType.header,
+				identifier: roomType.identifier,
+				isCombined: roomType.isCombined,
+				label: roomType.label,
+			},
+		}));
+	},
 	roomType() {
+		//The all channels room type is returned in a separate array, roomTypeChannelsOnly (above)
 		return roomTypes.getTypes().map((roomType) => ({
+			id: roomType.identifier,
 			template: roomType.customTemplate || 'roomList',
 			data: {
 				header: roomType.header,
@@ -46,6 +59,9 @@ Template.sideNav.helpers({
 	sidebarHideAvatar() {
 		return getUserPreference(Meteor.userId(), 'sidebarHideAvatar');
 	},
+	allChannels() {
+		return Template.instance().allChannels.get()
+	}
 });
 
 Template.sideNav.events({
@@ -99,11 +115,41 @@ const useMobileStyling = () => {
 	return window.innerWidth < 800
 }
 
+const showTab= (roomType) => {
+	var groupSelector = '.channel-tab'
+	var selector=`.${roomType}-tab` //d-tab, all-channels-tab, f-tab, popular-channels-tab
+
+	$(groupSelector).removeClass("active")
+	$(groupSelector+selector).addClass("active")
+
+	$(".tab-link").removeClass("current")
+	$(".tab-link[data-id="+roomType+"]").addClass("current")
+}
+
+
 Template.sideNav.onRendered(function() {
 	SideNav.init();
 	menu.init();
 	lazyloadtick();
 	redirectToDefaultChannelIfNeeded();
+
+	var authHeaders =  {'X-Auth-Token': 'VnEl0D4qFue-gobokfNvImOZd16DeYKIEvNxv6Ms69h', 'X-User-ID': 'F6tvjFaf8P2qkMAwJ'}//if wanting to avoid the meteor back-end
+	var apiUrl = '/api/v1/directory'
+
+	$.ajax({
+		url: apiUrl,
+		headers: authHeaders
+	}).done((data) => {
+		this.allChannels.set(data)
+		console.log("sideNav 134: Set allChannels")
+		console.log(JSON.stringify(data, null, 2))
+	})
+
+	$(".tab-link").on("click", (event) => {
+		showTab($(event.currentTarget).attr("data-id"))
+		return false;
+	})
+
 
 	return Meteor.defer(() => menu.updateUnreadBars());
 });
@@ -118,8 +164,9 @@ Template.sideNav.onCreated(function() {
 	this.groupedByType = new ReactiveVar(false);
 	this.showHeader = new ReactiveVar(false);
 	this.pageHasSidebar = new ReactiveVar(true);
-
+	this.allChannels = new ReactiveVar([]);
 	
+		
 	this.autorun(() => {
 		/*
 		setInterval(() => {

@@ -1,0 +1,13 @@
+<template name="sidebarfooter">
+	<footer class="sidebar__footer sidebar-footer-socvid">
+			{{#with myUserInfo}}
+			<div class="sidebar__toolbar" style="flex:1">
+				{{#each toolbarButtons}}
+					<button style="font-size: 24px;" class="sidebar__toolbar-button rc-tooltip rc-tooltip--down js-button" aria-label="{{name}}" aria-haspopup="{{hasPopup}}">
+						{{> icon block="sidebar__toolbar-button-icon" icon=icon }}
+					</button>
+				{{/each}}
+			</div>
+			{{/with}}
+	</footer>
+</template>

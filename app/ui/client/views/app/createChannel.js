@@ -294,7 +294,7 @@ Template.createChannel.onCreated(function() {
 	this.extensions_validations = {};
 	this.extensions_submits = {};
 	this.name = new ReactiveVar('');
-	this.type = new ReactiveVar(hasAllPermission(['create-p']) ? 'p' : 'c');
+	this.type = new ReactiveVar('c');
 	this.readOnly = new ReactiveVar(false);
 	this.broadcast = new ReactiveVar(false);
 	this.encrypted = new ReactiveVar(false);

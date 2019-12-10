@@ -7,6 +7,9 @@ import { UiTextContext, getUserPreference, roomTypes } from '../../utils';
 import { settings } from '../../settings';
 
 Template.roomList.helpers({
+	showContainer() {
+		return this.identifier !== 'c'
+	},
 	rooms() {
 		/*
 			modes:
@@ -114,7 +117,7 @@ Template.roomList.helpers({
 		or is unread and has one room
 		*/
 
-		return !['unread', 'f'].includes(group.identifier) || (rooms.length || (rooms.count && rooms.count()));
+		return !['unread', 'f', 'c', 'p'].includes(group.identifier) || (rooms.length || (rooms.count && rooms.count()));
 	},
 
 	roomType(room) {

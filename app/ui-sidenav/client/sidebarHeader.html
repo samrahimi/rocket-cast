@@ -10,7 +10,21 @@
 			height: 60px !important;
 		}
 		.svn-text {
-			flex: 2; padding:0px 10px 0px 0px; color: #cccccc; font-weight:bold; font-size:24px
+			flex: 2; padding:0px 10px 0px 0px; color: var(--rooms-list-title-color); font-weight:bold; font-size:30px
+		}
+
+		.svn-text .s {
+			color: red;
+		}
+
+
+		.svn-text .v {
+			color: green;
+		}
+
+
+		.svn-text .n {
+			color: blue;
 		}
 
 	</style>
@@ -21,8 +35,8 @@
 				</a>
 			</div>
 			{{#with myUserInfo}}
-			<div class="svn-text">
-					SVN<span style="color:yellow">TV</span>
+			<div class="svn-text" style="color:white">
+				SVN
 			</div>
 			<div class="sidebar__toolbar" style="flex:1">
 				{{#each toolbarButtons}}
