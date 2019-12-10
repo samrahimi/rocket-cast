@@ -241,10 +241,11 @@ function roomMaxAge(room) {
 
 const getChannelSurferViewerString = (channel) => {
  	var html = ''
-		channel.currentViewers.forEach((viewer) => { html += `<img data-name="${viewer.username}" alt="${viewer.display_name}" class="channel_surfer_minithumb" src="${viewer.avatar_url}"  /> &nbsp;`})
+		channel.currentViewers.forEach((viewer) => { 
+			html += 
+`<img data-name="${viewer.username}" alt="${viewer.display_name}" class="channel_surfer_minithumb" src="${viewer.avatar_url}"  /> &nbsp;`})
 
 	return html;
-
 }
 	const getChannelSurferHtml = (channels) => {
 		var html = ""
@@ -358,6 +359,7 @@ const startWhosWatchingUI = (rid, roomInstance) => {
 		if (e.detail.type && e.detail.type == "channel_surfer") {
 			var containerDiv = "#sidebar_channel_surfer"
 			$(containerDiv).html(getChannelSurferHtml(e.detail.payload))
+			$(".popular-channels-count").html(e.detail.payload.length)
 		}
 	})
 }

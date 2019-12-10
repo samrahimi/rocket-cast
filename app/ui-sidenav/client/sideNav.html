@@ -54,6 +54,15 @@
 				.rooms-list__list.large-thumbs {
 					margin-top: 40px;
 				}
+				.large-thumb-second-line {
+							  width: 100%;
+							  font-size: 12px;
+							  padding-left: 5px;
+							  margin-top: 5px;
+							  max-height: 32px;
+							  overflow: hidden;
+
+				}
 
 			</style>
 
@@ -70,6 +79,21 @@
 									</ul>
 						</div>
 		</div>
+
+		<div class="rooms-list channel-tab all-channels-tab" aria-label="Popular Right Now" role="region" style="padding-top:5px">
+			<div class="rooms-list all-channels" aria-label="All Channels" role="region">
+						<h3 class="rooms-list__type">
+							<ion-icon style="font-size:24px" name="list"></ion-icon>
+
+							<span class="rooms-list__type-text">
+								All Channels</span>
+							<span class="badge all-channels-count">0</span>
+						</h3>
+						<ul class="rooms-list__list large-thumbs" id="sidebar_all_channels">
+						</ul>
+			</div>
+		</div>
+
 
 
 		<!-- Container that holds the Admin sidenav -->
@@ -107,7 +131,7 @@
 					</a>
 				</div>
 				<div class="tab-icon">
-					<a class="tab-link" data-id="type-c">
+					<a class="tab-link" data-id="all-channels">
 						<ion-icon name="list"></ion-icon>
 					</a>
 				</div>

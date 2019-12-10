@@ -97,6 +97,9 @@ Template.sideNav.events({
 });
 
 const redirectToDefaultChannelIfNeeded = () => {
+	if (!Meteor.userId()) {
+		FlowRouter.go(`/login`);
+	}
 	/*
 	const currentRouteState = FlowRouter.current();
 	const needToBeRedirect = ['/', '/home'];
@@ -126,6 +129,123 @@ const showTab= (roomType) => {
 	$(".tab-link[data-id="+roomType+"]").addClass("current")
 }
 
+const getChannelSurferViewerString = (channel) => {
+	var html = ''
+	   channel.currentViewers.forEach((viewer) => { 
+		   html += 
+`<img data-name="${viewer.username}" alt="${viewer.display_name}" class="channel_surfer_minithumb" src="${viewer.avatar_url}"  /> &nbsp;`})
+
+   return html;
+}
+const getChannelSurferHtml = (channels, showViewers = true) => {
+	   var html = ""
+
+	   channels.forEach(channel => 
+		   {
+			   html+= `
+	   <li class="sidebar-item js-sidebar-type-c" data-id="" style="height:64px">
+			   <a class="sidebar-item__link" href="/channel/${channel.channel_name}" aria-label="${channel.channel_name}" style="align-items: start; -webkit-box-align: start">
+		   
+		   
+				   <div class="sidebar-item__picture" style="flex: 0 0 48px; width:48px; height:48px">
+		   
+					   <div class="sidebar-item__user-thumb" style="width:48px; height:48px">
+		   
+						   <div class="avatar">
+		   
+							   <img src="https://samrahimi.com/avatars/${channel.channel_name}.png" class="avatar-image">
+		   
+						   </div>
+		   
+					   </div>
+		   
+				   </div>
+		   
+				   <div class="sidebar-item__body">
+					   <div class="sidebar-item__message" style="height:48px">
+						   <div class="sidebar-item__message-top">
+							   <div class="sidebar-item__name">
+								   <div class="sidebar-item__room-type">
+									   <svg class="rc-icon rc-icon--default-size sidebar-item__icon sidebar-item__icon--hashtag"
+										   aria-hidden="true">
+										   <use xlink:href="#icon-hashtag"></use>
+									   </svg>
+								   </div>
+		   
+								   <div class="sidebar-item__ellipsis">
+									   ${channel.channel_name}
+								   </div>
+		   
+							   </div>
+							   <span class="sidebar-item__time"></span>
+						   </div>
+
+						   <div class="sidebar-item__message-bottom large-thumb-second-line" style="align-items:flex-start">
+						    ${channel.topic ? channel.topic : 'Another great channel on the Social Video Network'}
+					   	   </div>
+					   </div>	
+				   </div>
+
+
+			   </a>
+		   </li>
+		   `})
+
+	   return html
+}
+
+
+const initDiscoveryUi = () => {
+	//1. Listen for channel surfer dispatches over TRIP and render them as they come
+	
+	//This is being handled in room.js onrender....
+	//stupid place for it but it's not breaking things for mvp
+
+	/*
+	if (!window["CHANNEL_SURFER_LOADED"]) {
+		$(document).on("SVDispatchReceived", (e) => {
+			if (e.detail.type && e.detail.type == "channel_viewers") {
+				$(".activeUserThumbs").html(getThumbnailHtml(e.detail.payload, roomInstance))
+			}
+
+			if (e.detail.type && e.detail.type == "channel_surfer") {
+				var containerDiv = "#sidebar_channel_surfer"
+
+				//render the channels with mini-thumbs of latest viewers... 
+				$(containerDiv).html(getChannelSurferHtml(e.detail.payload, true))
+				window["CHANNEL_SURFER_LOADED"] = true //so we don't re-bind the event
+			}
+		})
+	} */
+
+	//2. Get a list of all channels from the back end api, and render it once
+	var authHeaders =  {'X-Auth-Token': 'VnEl0D4qFue-gobokfNvImOZd16DeYKIEvNxv6Ms69h', 'X-User-ID': 'F6tvjFaf8P2qkMAwJ'}//if wanting to avoid the meteor back-end
+	var apiUrl = '/api/v1/channels.list?count=0' //TODO: page this, don't get all!
+
+	$.ajax({
+		url: apiUrl,
+		headers: authHeaders
+	}).done((data) => {
+		console.log("sideNav 230: Got all channels from API, will render")
+		console.log(JSON.stringify(data, null, 2))
+
+		//It expects an array of CHANNELS in TRIP format 
+		//(only the channel_name field is required ATM)
+		let tripData = data.channels.filter((c) => c.t && c.t =='c')
+		.map((c) => {
+			return {channel_name: c.name, topic: c.topic};
+		})
+
+
+		var containerDiv = "#sidebar_all_channels"
+		$(containerDiv).html(getChannelSurferHtml(tripData, false))
+		$(".all-channels-count").html(tripData.length)
+
+		window["ALL_CHANNELS_LOADED"] = true //so we don't re-bind the event
+
+	})
+
+}
 
 Template.sideNav.onRendered(function() {
 	SideNav.init();
@@ -133,17 +253,7 @@ Template.sideNav.onRendered(function() {
 	lazyloadtick();
 	redirectToDefaultChannelIfNeeded();
 
-	var authHeaders =  {'X-Auth-Token': 'VnEl0D4qFue-gobokfNvImOZd16DeYKIEvNxv6Ms69h', 'X-User-ID': 'F6tvjFaf8P2qkMAwJ'}//if wanting to avoid the meteor back-end
-	var apiUrl = '/api/v1/directory'
-
-	$.ajax({
-		url: apiUrl,
-		headers: authHeaders
-	}).done((data) => {
-		this.allChannels.set(data)
-		console.log("sideNav 134: Set allChannels")
-		console.log(JSON.stringify(data, null, 2))
-	})
+	initDiscoveryUi(); //start the channel surfer
 
 	$(".tab-link").on("click", (event) => {
 		showTab($(event.currentTarget).attr("data-id"))
