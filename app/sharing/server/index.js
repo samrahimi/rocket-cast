@@ -9,6 +9,7 @@ WebApp.rawConnectHandlers.use(function(req, res, next) {
 	}
 	let channelName= path.split('/')[path.split('/').length-1]
 
-	injectIntoHead('oghamster2',`<meta property="og:hamster" content="${channelName}">`)
+    injectIntoHead('oghamster2',`<meta property="og:hamster" content="${channelName}">`)
+    return next();
 });
 
