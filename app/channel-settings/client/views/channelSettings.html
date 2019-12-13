@@ -13,7 +13,7 @@
 			</div>
 		{{/if}}
 		{{#with settings.ibroadcastEnabled}}
-		<div class="rc-user-info__row rc-user-info__row--separator">
+		<div class="rc-user-info__row rc-user-info__row--separator" style="display:none">
 			<div class="rc-switch rc-switch--blue">
 				<label class="rc-switch__label">
 					<span class="rc-switch__text">
@@ -29,7 +29,7 @@
 		{{/with}}
 
 		{{#with settings.ibroadcastRadioView}}
-		<div class="rc-user-info__row rc-user-info__row--separator">
+		<div class="rc-user-info__row rc-user-info__row--separator" style="display:none">
 			<div class="rc-switch rc-switch--blue">
 				<label class="rc-switch__label">
 					<span class="rc-switch__text">
@@ -67,7 +67,7 @@
 					<label class="rc-input__label">
 						<div class="rc-input__title">{{_ label}}{{equal default value '*'}}</div>
 						<div class="rc-input__wrapper">
-							<input type="text" name="name" value="{{value}}" class="rc-input__element js-input" disabled="{{./disabled}}"/>
+							<input type="text" name="name" value="{{value}}" class="rc-input__element js-input" disabled="disabled"/>
 						</div>
 					</label>
 				</div>

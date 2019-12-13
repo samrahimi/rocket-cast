@@ -871,10 +871,18 @@ Template.room.helpers({
         if (!roomData) { return ''; }
 
         var roomName= roomTypes.getRoomName(roomData.t, roomData);
-		console.log(JSON.stringify(roomData, null, 2))
     
 		return `<iframe id="the-player" src="https://samrahimi.com/client/video.html?channel=${roomName}&dev=false" allow="autoplay; fullscreen" style="border:0;overflow:hidden;width:100%"></iframe>`;
-    },
+	},
+	likeButtonUrl() {
+		const roomData = Session.get(`roomData${ this._id }`);
+        if (!roomData) { return ''; }
+
+        var roomName= roomTypes.getRoomName(roomData.t, roomData);
+		console.log(JSON.stringify(roomData, null, 2))
+
+		return `https://www.facebook.com/plugins/like.php?href=https://chat.socvid.net/channel/${roomName}&width=164&layout=button_count&action=like&size=large&share=true&height=46&colorscheme=dark&appId=404329223839581`
+	},
 	jistiRoomUrl() {
 		const roomData = Session.get(`roomData${ this._id }`);
         if (!roomData) { return ''; }

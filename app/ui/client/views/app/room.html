@@ -34,14 +34,14 @@
 							<div id="desktop-jitsi-container" style="flex:1; width:100%">			
 									<style>
 									.nowWatching {
-										margin:30px 10px 10px 10px;
+										margin:10px 10px 10px 10px;
 										overflow:hidden;
 									}
 									.activeUserThumbs {
 										overflow:hidden;
 									}
 									.nowWatching .headerText {
-										font-size:14px; color:#9ea2a8; font-weight:bold;
+										font-size:14px; color:#9ea2a8; font-weight:bold; box-shadow: 0 1px 2px 0 rgba(31, 35, 41, 0.5); padding-bottom:5px;
 									}
 									.nowWatching .greenDot {
 										background-color: lawngreen;
@@ -71,9 +71,6 @@
 									}
 									.nowWatching .headerText .nowWatchingText {
 										flex: 1;
-									}
-									.nowWatching .headerText .badge.viewerCount {
-										margin-top: 5px;
 									}
 									.nowWatching .status-bullet-online {
 										background-color: #2de0a5;
@@ -132,13 +129,16 @@
 											</a>
 									</div>
 									<div class="nowWatching">
-										<h3 class="headerText">
-											<span class="nowWatchingText">People Watching #{{roomName}}</span>
-											<span class="badge viewerCount">👁️‍&nbsp;{{viewerCount}} Online</span></h3>
+											<div style="width:100%; height: 46px; text-align:right">
+												<iframe src="{{likeButtonUrl}}" width="145" height="46" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
+											</div>
+											<h3 class="headerText">
+												<span class="nowWatchingText">People Watching #{{roomName}}</span>
+												<span class="badge viewerCount">👁️‍&nbsp;{{viewerCount}} Online</span>
+											</h3>
 										<div class="activeUserThumbs"></div>
-									</div>
 								</div>
-
+							</div>
 
 					</div>
 					{{/if}}
