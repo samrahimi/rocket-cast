@@ -39,7 +39,7 @@ WebApp.rawConnectHandlers.use(function(req, res, next) {
 	catch(e) {
 		return next();
 	}
-	callRestApi('https://chat.socvid.net/api/v1/channels.info?roomName='+channelName, (response) => {
+	callRestApi('https://svn.im/api/v1/channels.info?roomName='+channelName, (response) => {
 		try {
 			var result = JSON.parse(response)
 			console.log("Setting OG Tags in HEAD for "+channelName+". Result info: "+JSON.stringify(result))
@@ -64,7 +64,7 @@ WebApp.rawConnectHandlers.use(function(req, res, next) {
 				<meta name="apple-mobile-web-app-capable" content="yes" />
 				
 				<meta property="og:title" content="${channelName} on SVN" />
-				<meta property="og:url" content="https://chat.socvid.net/channel/${channelName}" />
+				<meta property="og:url" content="https://svn.im/channel/${channelName}" />
 				<meta property="og:image" content="https://samrahimi.com/avatars/${channelName}.png" />
 				<meta property="og:description" content="${getOGDescription(result.channel)}" />
 				<meta property="og:type" content="video.other" />
@@ -79,7 +79,7 @@ WebApp.rawConnectHandlers.use(function(req, res, next) {
 						${result.channel.description ? result.channel.description: ""}
 					</p>
 					
-					<p style="text-align-center"><a href="https://chat.socvid.net/channel/${channelName}">Please click here if you are not redirected within 5s</a></p>
+					<p style="text-align-center"><a href="https://svn.im/channel/${channelName}">Please click here if you are not redirected within 5s</a></p>
 				</body>
 				</html>`
 

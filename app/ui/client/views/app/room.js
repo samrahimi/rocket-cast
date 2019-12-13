@@ -231,11 +231,11 @@ function roomMaxAge(room) {
 	{
 		"anonymous": false,
 		"user_id": "8EGJZh3RdjwNZWtvd",
-		"profile_url": "https://chat.socvid.net/direct/alex.hartman.adams",
+		"profile_url": "https://svn.im/direct/alex.hartman.adams",
 		"system_id": "socvid.chat",
 		"username": "alex.hartman.adams",
 		"display_name": "Alex Hartman Adams",
-		"avatar_url": "https://chat.socvid.net/avatar/alex.hartman.adams",
+		"avatar_url": "https://svn.im/avatar/alex.hartman.adams",
 		"last_activity": 1575250227380 
 	} */
 
@@ -446,7 +446,7 @@ const initSocvidUI = (roomInstance) => {
 
 }
 //Create a generic SocVid user object from the currently logged in user
-//The SocVid servers have no idea about Meteor or the chat.socvid.net database
+//The SocVid servers have no idea about Meteor or the svn.im database
 //and expect user data to have everything it needs for rendering 
 //current viewers, who's online, and channel surfer data
 const getGenericUserObject= () => {
@@ -458,18 +458,18 @@ const getGenericUserObject= () => {
 			system_id: "socvid.chat",
 			username: "anonymous",
 			display_name: "Anonymous User",
-			avatar_url: "https://chat.socvid.net/images/socvid/unknown_user.png"
+			avatar_url: "https://svn.im/images/socvid/unknown_user.png"
 		}
 	} else {
 		let u = Meteor.user()
 		return {
 			anonymous: false,
 			user_id: u._id,
-			profile_url: "https://chat.socvid.net/direct/"+ u.username,
+			profile_url: "https://svn.im/direct/"+ u.username,
 			system_id: "socvid.chat",
 			username: u.username,
 			display_name: u.name,
-			avatar_url: "https://chat.socvid.net/avatar/"+u.username
+			avatar_url: "https://svn.im/avatar/"+u.username
 		}
 	}
 }
@@ -492,7 +492,7 @@ const getGenericRoomObject = (rid) => {
 			channel_id: rid,
 			channel_type: roomData.t,
 			channel_name: roomName,
-			channel_url: "https://chat.socvid.net/channel/"+roomName,
+			channel_url: "https://svn.im/channel/"+roomName,
 			avatar_url: "https://samrahimi.com/avatars/"+roomName+".png",
 		}
 	}
@@ -881,7 +881,7 @@ Template.room.helpers({
         var roomName= roomTypes.getRoomName(roomData.t, roomData);
 		console.log(JSON.stringify(roomData, null, 2))
 
-		return `https://www.facebook.com/plugins/like.php?href=https://chat.socvid.net/channel/${roomName}&width=164&layout=button_count&action=like&size=large&share=true&height=46&colorscheme=dark&appId=404329223839581`
+		return `https://www.facebook.com/plugins/like.php?href=https://svn.im/channel/${roomName}&width=164&layout=button_count&action=like&size=large&share=true&height=46&colorscheme=dark&appId=404329223839581`
 	},
 	jistiRoomUrl() {
 		const roomData = Session.get(`roomData${ this._id }`);
