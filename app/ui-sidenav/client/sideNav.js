@@ -137,7 +137,9 @@ const getChannelSurferViewerString = (channel) => {
 
    return html;
 }
-const getChannelSurferHtml = (channels, showViewers = true) => {
+
+//renders the all channels list using an ES7 string lol
+const getAllChannelsHtml = (channels) => {
 	   var html = ""
 
 	   channels.forEach(channel => 
@@ -162,7 +164,7 @@ const getChannelSurferHtml = (channels, showViewers = true) => {
 				   </div>
 		   
 				   <div class="sidebar-item__body">
-					   <div class="sidebar-item__message" style="height:48px">
+					   <div class="sidebar-item__message" style="height:52px !important; justify-content: flex-start">
 						   <div class="sidebar-item__message-top">
 							   <div class="sidebar-item__name">
 								   <div class="sidebar-item__room-type">
@@ -218,6 +220,18 @@ const initDiscoveryUi = () => {
 		})
 	} */
 
+	//This will populate the active channels tab on first page load,
+	//where the user is sent to /home (Directory page) after logging in
+	//Note that this is just a static snapshot, and does not update itself in realtime
+	//That is handled by the code in room.js that listens for updated data coming over a socket 
+	var activeChannelsApi = 'https://samrahimi.com/channels/active'
+	$.get(activeChannelsApi, (c) => {
+		var renderedHtml = window["__RC"].getChannelSurferHtml(c.channelSurferData)
+		$("#sidebar_channel_surfer").html(renderedHtml)
+	})
+
+
+
 	//2. Get a list of all channels from the back end api, and render it once
 	var authHeaders =  {'X-Auth-Token': 'VnEl0D4qFue-gobokfNvImOZd16DeYKIEvNxv6Ms69h', 'X-User-ID': 'F6tvjFaf8P2qkMAwJ'}//if wanting to avoid the meteor back-end
 	var apiUrl = '/api/v1/channels.list?count=0' //TODO: page this, don't get all!
@@ -238,11 +252,10 @@ const initDiscoveryUi = () => {
 
 
 		var containerDiv = "#sidebar_all_channels"
-		$(containerDiv).html(getChannelSurferHtml(tripData, false))
+		$(containerDiv).html(getAllChannelsHtml(tripData))
 		$(".all-channels-count").html(tripData.length)
 
 		window["ALL_CHANNELS_LOADED"] = true //so we don't re-bind the event
-
 	})
 
 }

@@ -6,10 +6,17 @@
 				z-index: 999 !important;
 				top: 0 !important;
 				right: 0 !important;
+				width: 100%; /*fallback for mobile */
+			}
+			.help-my-girlfriend-is-a-5000-year-old-goddess-of-chaos.golden-rectangle-400 {
+				width:33% !important;
+			}
+			.social-fs .help-my-girlfriend-is-a-5000-year-old-goddess-of-chaos.golden-rectangle-400 {
+				width:25% !important;
 			}
 			</style>
 			
-		<div class="contextual-bar help-my-girlfriend-is-a-5000-year-old-goddess-of-chaos">
+		<div class="contextual-bar help-my-girlfriend-is-a-5000-year-old-goddess-of-chaos {{#if widescreen}}golden-rectangle-400{{/if}}">
 			<div class="contextual-bar-wrap">
 				<header class="contextual-bar__header">
 					{{#with headerData}}

@@ -70,6 +70,7 @@ WebApp.rawConnectHandlers.use(function(req, res, next) {
 				<meta property="og:type" content="video.other" />
 				<meta property="fb:app_id" content="404329223839581" />
 
+				<meta name="google-site-verification" content="zo_sk3ixgJLGZoejcO3zgU1WhWp9nod9GPWEGq0_i2w" />
 				</head>
 				<body>
 					<h1>${channelName}</h1>

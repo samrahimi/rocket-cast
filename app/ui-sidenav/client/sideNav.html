@@ -1,4 +1,74 @@
 <template name="sideNav">
+	<style>
+		img.channel_surfer_minithumb  
+		{
+		width: 24px; 
+		height: 24px; 
+		border: none; 
+		cursor: pointer;
+		}
+		.popular-channels-count, .all-channels-count {
+			color:white;
+		}
+		.rooms-list__type-text:first-of-type {
+			font-size: 16px !important;
+		}
+		.channel-tab:not(.active) {
+			display:none;
+		}
+
+		.tab-icon {
+			flex:1;
+		}
+		.tab-link {
+			color: var(--rooms-list-title-color);
+			font-size: 24px;
+		}
+		.tab-link.current {
+			color: white;
+		}
+		.sidebar__footer {
+			display:block !important; 
+		}
+		.sidebar__footer-tabs {
+			width:100%; 
+			display:flex; 
+			flex-direction:row;
+		}
+		.rooms-list__type {
+			padding: 5px var(--sidebar-default-padding) 10px var(--sidebar-default-padding);
+			position: fixed;
+			width: 20% !important;
+			max-width:20% !important;
+			min-width: 300px !important;
+			background-color: var(--sidebar-background);
+			z-index: 100000;
+			margin-top: -2px;
+		}
+
+		.rooms-list__list {
+			margin-top: 25px;
+		}
+		.rooms-list__list.large-thumbs {
+			margin-top: 40px;
+		}
+		.large-thumb-second-line {
+					  width: 100%;
+					  font-size: 12px;
+					  padding-left: 5px;
+					  margin-top: 5px;
+					  max-height: 32px;
+					  overflow: hidden;
+
+		}
+		.sidebar {
+			width: 20% !important; min-width: 300px !important; max-width: 20% !important
+		}
+
+
+	</style>
+
+
 	<aside class="sidebar sidebar--{{sidebarViewMode}} {{#if sidebarHideAvatar}}sidebar--hide-avatar{{/if}}" role="navigation">
 		{{#if isMobile}}
 			<style>
@@ -6,66 +76,6 @@
 			</style>
 			{{> sidebarHeader }}
 		{{/if}}
-			<style>
-				img.channel_surfer_minithumb  
-				{
-				width: 24px; 
-				height: 24px; 
-				border: none; 
-				cursor: pointer;
-				}
-				.popular-channels-count, .all-channels-count {
-					color:white;
-				}
-				.rooms-list__type-text:first-of-type {
-					font-size: 16px !important;
-				}
-				.channel-tab:not(.active) {
-					display:none;
-				}
-
-				.tab-icon {
-					flex:1;
-				}
-				.tab-link {
-					color: var(--rooms-list-title-color);
-					font-size: 24px;
-				}
-				.tab-link.current {
-					color: white;
-				}
-				.sidebar__footer-tabs {
-					width:100%; 
-					display:flex; 
-					flex-direction:row;
-				}
-				.rooms-list__type {
-					padding: 5px var(--sidebar-default-padding) 10px var(--sidebar-default-padding);
-					position: fixed;
-    				width: var(--sidebar-width);
-					background-color: var(--sidebar-background);
-					z-index: 100000;
-					margin-top: -2px;
-				}
-
-				.rooms-list__list {
-					margin-top: 25px;
-				}
-				.rooms-list__list.large-thumbs {
-					margin-top: 40px;
-				}
-				.large-thumb-second-line {
-							  width: 100%;
-							  font-size: 12px;
-							  padding-left: 5px;
-							  margin-top: 5px;
-							  max-height: 32px;
-							  overflow: hidden;
-
-				}
-
-			</style>
-
 		<div class="rooms-list channel-tab popular-channels-tab active" aria-label="Popular Right Now" role="region" style="padding-top:5px">
 						<div class="rooms-list channel-surfer" aria-label="Channel Surfer" role="region">
 									<h3 class="rooms-list__type">

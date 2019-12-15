@@ -8,6 +8,19 @@ import { t } from '../../../utils';
 import { Users, Rooms } from '../../../models';
 import * as CONSTANTS from '../../constants';
 
+const createVideoConferenceId = () => {
+	const rid = Session.get('openedRoom');
+
+	try {
+		const roomData = Session.get(`roomData${rid}`)
+		if (roomData && roomData.t == 'c') {
+			return roomData.name
+		}
+		return rid
+	} catch (x) {
+		return rid
+	}
+}
 Template.videoFlexTab.helpers({
 	openInNewWindow() {
 		return settings.get('Jitsi_Open_New_Window');
@@ -27,16 +40,15 @@ Template.videoFlexTab.onRendered(function() {
 	const rid = Session.get('openedRoom');
 
 	const width = 'auto';
-	const height = window.innerHeight - 200;
+	const height = window.innerHeight - 60;
 
 	const configOverwrite = {
-		desktopSharingChromeExtId: settings.get('Jitsi_Chrome_Extension'),
+		//desktopSharingChromeExtId: settings.get('Jitsi_Chrome_Extension'),
 	};
 	const interfaceConfigOverwrite = {
 		SHOW_JITSI_WATERMARK: false,
-		GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
+		//GENERATE_ROOMNAMES_ON_WELCOME_PAGE: false,
 		DISPLAY_WELCOME_PAGE_CONTENT: false,
-	
 	};
 
 	let jitsiRoomActive = null;
@@ -102,7 +114,7 @@ Template.videoFlexTab.onRendered(function() {
 			}
 
 			const domain = settings.get('Jitsi_Domain');
-			const jitsiRoom = settings.get('Jitsi_URL_Room_Prefix') + settings.get('uniqueID') + rid;
+			const jitsiRoom = "SVN%20Live%20["+createVideoConferenceId()+"]";
 			const noSsl = !settings.get('Jitsi_SSL');
 			const isEnabledTokenAuth = settings.get('Jitsi_Enabled_TokenAuth');
 
@@ -153,7 +165,7 @@ Template.videoFlexTab.onRendered(function() {
 				// Keep it from showing duplicates when re-evaluated on variable change.
 				const name = Users.findOne(Meteor.userId(), { fields: { name: 1 } });
 				if (!$('[id^=jitsiConference]').length) {
-					this.api = new JitsiMeetExternalAPI(domain, 'SVNLive'+jitsiRoom, width, height, this.$('.video-container').get(0), configOverwrite, interfaceConfigOverwrite, noSsl, accessToken);
+					this.api = new JitsiMeetExternalAPI(domain, jitsiRoom, width, height, this.$('.video-container').get(0), configOverwrite, interfaceConfigOverwrite, noSsl, accessToken);
 
 					/*
 					* Hack to send after frame is loaded.
@@ -162,8 +174,6 @@ Template.videoFlexTab.onRendered(function() {
 					*/
 					Meteor.setTimeout(() => {
 						this.api.executeCommand('displayName', [name])
-						this.api.executeCommand('subject', '')
-
 					}, 5000);
 					return start();
 				}

@@ -28,4 +28,7 @@ Template.contextualBar.helpers({
 			...Template.currentData().data,
 		};
 	},
+	widescreen() {
+		return (screen.width >= 800)
+	}
 });

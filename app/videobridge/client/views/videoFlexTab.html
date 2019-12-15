@@ -7,6 +7,15 @@
 			<p>{{_ "Opened_in_a_new_window"}}</p>
 		</div>
 	{{else}}
+		<style>
+		.video-container iframe {
+			position:fixed; top:60px; bottom:0; right:0; width:33% !important; min-width: 400px;
+		}
+		.social-fs .video-container iframe {
+			position:fixed; top:60px; bottom:0; right:0; width:25% !important; min-width: 400px;
+		}
+
+		</style>
 		<div class="video-chat">
 			<div class="main-video">
 				<div class="video-container"></div>

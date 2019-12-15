@@ -906,6 +906,12 @@ Template.room.helpers({
 		return roomName
 
 	},
+	addToFacebookPageUrl() {
+		return `https://www.facebook.com/dialog/pagetab?
+							app_id=404329223839581
+							&redirect_uri=${window.location.href}`
+
+	},
 	viewerCount() {
 		return Template.instance().activeViewerCount.get()
 	},
@@ -1007,6 +1013,9 @@ export const dropzoneEvents = {
 
 Template.room.events({
 	...dropzoneEvents,
+	'click #addToFacebookPage'() {
+		
+	},
 	'click .js-follow-thread'() {
 		const { msg } = messageArgs(this);
 		call('followMessage', { mid: msg._id });
