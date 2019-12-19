@@ -33,10 +33,14 @@
 							</div>
 							<div id="desktop-jitsi-container" style="flex:1; width:100%">			
 									<style>
-									.nowWatching {
-										margin:10px 10px 10px 10px;
-										overflow:hidden;
-									}
+									.nowWatching 
+										{
+											margin: 10px 10px 10px 10px;
+											overflow: hidden;
+											position: absolute;
+											right: 0;
+											bottom: 0;									
+										}
 									.activeUserThumbs {
 										overflow:hidden;
 									}
@@ -57,16 +61,19 @@
 										width: 64px; 
 										height: 64px; 
 										padding: 10px; 
-										float: left;
+										float: right;
 										border: none; 
 										cursor: pointer;
 									}
 									.nowWatching a.recentViewer {
 										position: relative;
-										float: left;
+										float: right;
 									}
 									.nowWatching .headerText {
 										display:flex;
+										width: 100%;
+										text-align: right;
+										justify-content: flex-end
 
 									}
 									.nowWatching .headerText .nowWatchingText {
@@ -99,8 +106,9 @@
 										font-size:14px; 
 										right: 10px;
 										height: 24px;
-										color:hsl(216, 5%, 64%); 
-										font-weight:500 !important;										
+										/* color:hsl(216, 5%, 64%); */
+										font-weight:500 !important;	
+										color: rgb(22, 108, 240) !important									
 
 									}
 
@@ -117,27 +125,27 @@
 										color:white; 
 										cursor:pointer;
 									}
-
+									.likeButtons {
+										width:100%; height: 46px; text-align:right;position:relative; top:10px; right:10px;
+									}
 
 									</style>
-
+									<div class="likeButtons">
+										<iframe src="{{likeButtonUrl}}" width="145" height="46" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
+									</div>
 
 									<div id="socialFullScreen">
 											<a onclick="javascript: window.FS.toggleSocialFullscreen(); return false" class="screenSelector fs-social">
 												<ion-icon name="resize">
 												</ion-icon>
-
-												 Toggle "Social Full Screen"
+												 Social FullScreen
 											</a>
 
 											<a style="display:none" id="addToFacebookPage" href="{{addToFacebookPageUrl}}">Add Channel to Facebook Page</a>
 									</div>
 									<div class="nowWatching">
-											<div style="width:100%; height: 46px; text-align:right">
-												<iframe src="{{likeButtonUrl}}" width="145" height="46" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
-											</div>
 											<h3 class="headerText">
-												<span class="nowWatchingText">People Watching #{{roomName}}</span>
+												<span class="nowWatchingText" style="display:none">People Watching #{{roomName}}</span>
 												<span class="badge viewerCount">👁️‍&nbsp;{{viewerCount}} Online</span>
 											</h3>
 										<div class="activeUserThumbs"></div>

@@ -1,6 +1,6 @@
 {
     "name": "Social Video Network",
-    "description": "Stream anything and watch videos with friends",
+    "description": "Livestream anything on YouTube and watch with friends.",
     "launch_path": "/",
     "icons": {
         "192": "/assets/favicon_192.png",

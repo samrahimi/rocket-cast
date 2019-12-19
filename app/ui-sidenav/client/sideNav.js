@@ -198,28 +198,6 @@ const getAllChannelsHtml = (channels) => {
 
 
 const initDiscoveryUi = () => {
-	//1. Listen for channel surfer dispatches over TRIP and render them as they come
-	
-	//This is being handled in room.js onrender....
-	//stupid place for it but it's not breaking things for mvp
-
-	/*
-	if (!window["CHANNEL_SURFER_LOADED"]) {
-		$(document).on("SVDispatchReceived", (e) => {
-			if (e.detail.type && e.detail.type == "channel_viewers") {
-				$(".activeUserThumbs").html(getThumbnailHtml(e.detail.payload, roomInstance))
-			}
-
-			if (e.detail.type && e.detail.type == "channel_surfer") {
-				var containerDiv = "#sidebar_channel_surfer"
-
-				//render the channels with mini-thumbs of latest viewers... 
-				$(containerDiv).html(getChannelSurferHtml(e.detail.payload, true))
-				window["CHANNEL_SURFER_LOADED"] = true //so we don't re-bind the event
-			}
-		})
-	} */
-
 	//This will populate the active channels tab on first page load,
 	//where the user is sent to /home (Directory page) after logging in
 	//Note that this is just a static snapshot, and does not update itself in realtime
@@ -252,7 +230,7 @@ const initDiscoveryUi = () => {
 
 
 		var containerDiv = "#sidebar_all_channels"
-		$(containerDiv).html(getAllChannelsHtml(tripData))
+		$(containerDiv).html(window["__RC"].getAllChannelsHtml(tripData))
 		$(".all-channels-count").html(tripData.length)
 
 		window["ALL_CHANNELS_LOADED"] = true //so we don't re-bind the event

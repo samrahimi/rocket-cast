@@ -34,6 +34,7 @@ settings.collection.find({ _id: /theme-color-rc/i }, { fields: { value: 1 } }).o
 callbacks.add('afterLogoutCleanUp', () => customScriptsOnLogout(), callbacks.priority.LOW, 'custom-script-on-logout');
 
 Template.body.onRendered(function() {
+	
 	new Clipboard('.clipboard');
 
 	$(document.body).on('keydown', function(e) {
@@ -255,6 +256,7 @@ Template.main.events({
 
 Template.main.onRendered(function() {
 	$('#initial-page-loading').remove();
+
 
 	return Tracker.autorun(function() {
 		const userId = Meteor.userId();
